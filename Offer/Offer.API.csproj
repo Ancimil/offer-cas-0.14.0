@@ -1,0 +1,53 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <ServerGarbageCollection>false</ServerGarbageCollection>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Connected Services\" />
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AssecoCurrencyConversion" Version="0.6.0-build017-526c1742" />
+    <PackageReference Include="MicroserviceCommon" Version="1.6.3-dev-005-e4c7aff7" />
+    <PackageReference Include="AuthorizationMiddleware" Version="0.1.1-build047-7ffdc23f" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="5.0.0" />
+    <PackageReference Include="AutoMapper" Version="8.1.0" />
+    <PackageReference Include="DigitalToolset" Version="0.1.1" />
+    <PackageReference Include="Iso8601Duration" Version="1.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="configuration/**/*" Link="configuration\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="Always" />
+    <Folder Include="configuration\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.3.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="5.3.1" />
+    <PackageReference Include="System.ServiceModel.Duplex" Version="4.6.*" />
+    <PackageReference Include="System.ServiceModel.Http" Version="4.6.0" />
+    <PackageReference Include="System.ServiceModel.NetTcp" Version="4.6.*" />
+    <PackageReference Include="System.ServiceModel.Security" Version="4.6.*" />
+    <PackageReference Include="System.DirectoryServices.Protocols" Version="4.6.*" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Offer.Domain\Offer.Domain.csproj" />
+    <ProjectReference Include="..\Offer.Infrastructure\Offer.Infrastructure.csproj" />
+    <ProjectReference Include="..\PriceCalculation\PriceCalculation.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="configuration\appsettings.Development.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="configuration\appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services" />
+  </ItemGroup>
+
+</Project>

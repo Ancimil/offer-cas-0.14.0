@@ -1,0 +1,146 @@
+clone:
+  fetch_source_code:
+    image: plugins/git
+    depth: 1
+
+pipeline:
+  build:
+    image: microsoft/dotnet:2.2-sdk
+    commands:
+      - cd Offer
+      - dotnet publish -c Release -o out
+
+  prepare_build_tags:
+    image: registry.asseco.rs/asseco/image-tagger
+    secrets: [ GITHUB_TOKEN ]
+
+  #test_calculation:
+  #  image: microsoft/dotnet:2.2-sdk
+  #  commands:
+  #    - cd OfferApiTest
+  #    - dotnet test 
+    
+  copy_tag:
+    image: alpine:3.6
+    commands:
+      - echo -e "\nCOPY .version /.version" >> Offer/Dockerfile
+      - cp .version Offer/.version
+
+  publish:
+    image: plugins/docker
+    context: Offer
+    dockerfile: Offer/Dockerfile
+    registry: registry.asseco.rs
+    repo: registry.asseco.rs/asseco/offer
+    secrets: [ docker_username, docker_password ]
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  #sign_image:
+  #  image: registry.asseco.rs/asseco/signer
+  #  commands:
+  #    - docker image push registry.asseco.rs/asseco/offer:$(head -n 1 .version)
+  #  secrets: [docker_username, docker_password, DOCKER_CONTENT_TRUST_ROOT_PASSPHRASE, DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE]
+  #  volumes:
+  #    - /var/run/docker.sock:/var/run/docker.sock
+  #    - /certs:/etc/ssl/certs/
+  #    - /root/.docker:/root/.docker/
+  #  when:
+  #    event: [tag]
+
+#  stack_versioning:
+#    image: registry.asseco.rs/asseco/stack-version
+#    docker_image: registry.asseco.rs/asseco/offer
+#    param: sample
+#    secrets: [GITHUB_TOKEN, GITHUB_NAME, GIT_MAIL, GIT_NAME, docker_username, docker_password]
+
+  version_helm_chart:
+    image: registry.asseco.rs/asseco/chart-version
+    docker_image: registry.asseco.rs/asseco/offer
+    chart: digital-origination
+    subchart: offer
+    secrets: [ GITHUB_TOKEN, GITHUB_NAME, GIT_MAIL, GIT_NAME, docker_username, docker_password ]
+
+  cleanup_registry:
+    image: registry.asseco.rs/asseco/registry-cleanup
+    repo: asseco/offer
+
+##  ci_deploy:
+##    image: registry.asseco.rs/asseco/ci-deploy
+##    secrets: [ HELM_HOST, ENV_HOSTNAME ]
+##    volumes:
+##      - /kubectl/kubectl.conf:/root/.kube/config
+
+#  prepare_files:
+#    image: alpine:3.6
+#    commands:
+#      - cp digital-origination-stack/override.yml docker-compose.over.yml
+#      - cp digital-origination-stack/common.yml common.yml
+#      - cp digital-origination-stack/$DRONE_REPO_NAME/$(head -n 1 .version).yml docker-compose.ori.yml
+
+#  deploy_env:
+#    image: registry.asseco.rs/asseco/docker-cli
+#    hostname: 172.16.90.145
+#    apihost: ucp.asseco.rs:8090
+#    ci: true
+#    param: sample
+#    secrets: [API_PASSWORD]
+
+##  run_api_tests:
+##    image: registry.asseco.rs/asseco/api-test
+
+#  stable_versioning:
+#    image: registry.asseco.rs/asseco/stack-version
+#    docker_image: registry.asseco.rs/asseco/offer
+#    test_pass: true
+#    secrets: [GITHUB_TOKEN, GITHUB_NAME, GIT_MAIL, GIT_NAME, docker_username, docker_password]
+#    when:
+#      event: [tag]
+
+##  store_test_results:
+##    image: registry.asseco.rs/asseco/store-test
+##    secrets: [ TEST_STORE_URL ]
+##    when:
+##      status: [ failure, success ]
+
+#  remove_env:
+#    image: registry.asseco.rs/asseco/docker-cli
+#    remove: test_stack
+#    apihost: ucp.asseco.rs:8090
+#    ci: true
+#    param: sample
+#    secrets: [API_PASSWORD]
+#    when:
+#      status: [ failure, success ]
+
+##  ci_remove:
+##    image: registry.asseco.rs/asseco/ci-deploy
+##    remove: true
+##    secrets: [ HELM_HOST ]
+##    volumes:
+##      - /kubectl/kubectl.conf:/root/.kube/config
+##    when:
+##      status: [ failure, success ]
+
+  remove_local_images:
+    image: docker:17.12.1-ce
+    commands:
+      - docker rmi registry.asseco.rs/asseco/offer:$(head -n 1 .version)
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    when:
+      status: [ failure, success ]
+
+  slack_notify:
+    image: plugins/slack
+    secrets: [ slack_webhook ]
+    channel: drone
+    username: drone
+    when:
+      status: [ failure ]
+    template: >
+      {{#success build.status}}
+        Repo {{repo.name}} build {{build.number}} succeeded. Good job {{build.author}}!
+      {{else}}
+        Repo {{repo.name}} build {{build.number}} failed. <@{{build.author}}> fix me please!
+      {{/success}}

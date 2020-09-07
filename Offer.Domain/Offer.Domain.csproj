@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <ServerGarbageCollection>false</ServerGarbageCollection>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="AggregatesModel\ApplicationAggregate\InstallmentPlanModel\InstallmentPlan.cs" />
+    <Compile Remove="Calculations\CalculateOfferQuery.cs" />
+    <Compile Remove="Calculations\FeeQuery.cs" />
+    <Compile Remove="Calculations\FeeVariationQuery.cs" />
+    <Compile Remove="Calculations\InstallmentPlanQuery.cs" />
+    <Compile Remove="Calculations\InstallmentPlanRowQuery.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AssecoCurrencyConversion" Version="0.6.0-build017-526c1742" />
+    <PackageReference Include="AutoMapper" Version="8.1.0" />
+    <PackageReference Include="Iso8601Duration" Version="1.0.0" />
+    <PackageReference Include="JsonSubTypes" Version="1.6.0" />
+    <PackageReference Include="MediatR" Version="7.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CalculationService\CalculationService.csproj" />
+    <ProjectReference Include="..\PriceCalculation\PriceCalculation.csproj" />
+  </ItemGroup>
+
+</Project>

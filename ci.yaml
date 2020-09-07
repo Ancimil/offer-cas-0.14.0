@@ -1,0 +1,116 @@
+kind: pipeline
+name: default
+
+platform:
+  os: linux
+  arch: amd64
+
+clone:
+  disable: true
+
+steps:
+- name: fetch_source_code
+  pull: default
+  image: plugins/git
+  settings:
+    depth: 1
+
+- name: build
+  pull: default
+  image: microsoft/dotnet:2.2-sdk
+  commands:
+  - cd Offer
+  - dotnet publish -c Release -o out
+
+- name: prepare_build_tags
+  pull: default
+  image: registry.see.asseco.com/tools/image-tagger
+  environment:
+    GITHUB_TOKEN:
+      from_secret: GITHUB_TOKEN
+
+- name: copy_tag
+  pull: default
+  image: alpine:3.6
+  commands:
+  - echo -e "\nCOPY .version /.version" >> Offer/Dockerfile
+  - cp .version Offer/.version
+
+- name: publish
+  pull: default
+  image: plugins/docker
+  settings:
+    context: Offer
+    dockerfile: Offer/Dockerfile
+    registry: registry.see.asseco.com
+    repo: registry.see.asseco.com/do/offer
+  environment:
+    DOCKER_USERNAME:
+      from_secret: HARBOR_USERNAME
+    DOCKER_PASSWORD:
+      from_secret: HARBOR_PASSWORD
+  volumes:
+  - name: docker
+    path: /var/run/docker.sock
+
+- name: version_helm_chart
+  pull: default
+  image: registry.see.asseco.com/tools/chart-version
+  settings:
+    chart: digital-origination
+    docker_image: registry.see.asseco.com/do/offer
+    subchart: offer
+  environment:
+    DOCKER_USERNAME:
+      from_secret: HARBOR_USERNAME
+    DOCKER_PASSWORD:
+      from_secret: HARBOR_PASSWORD
+    GITHUB_NAME:
+      from_secret: GITHUB_NAME
+    GITHUB_TOKEN:
+      from_secret: GITHUB_TOKEN
+    GIT_MAIL:
+      from_secret: GIT_MAIL
+    GIT_NAME:
+      from_secret: GIT_NAME
+
+- name: cleanup_registry
+  pull: default
+  image: registry.see.asseco.com/tools/registry-cleanup
+  settings:
+    repo: do/offer
+
+- name: remove_local_images
+  pull: default
+  image: docker:18
+  commands:
+  - docker rmi registry.see.asseco.com/do/offer:$(head -n 1 .version)
+  volumes:
+  - name: docker
+    path: /var/run/docker.sock
+  when:
+    status:
+    - failure
+    - success
+
+- name: slack_notify
+  pull: default
+  image: plugins/slack
+  settings:
+    channel: drone
+    template: "{{#success build.status}}\n  Repo {{repo.name}} build {{build.number}} succeeded. Good job {{build.author}}!\n{{else}}\n  Repo {{repo.name}} build {{build.number}} failed. <@{{build.author}}> fix me please!\n{{/success}}\n"
+    username: drone
+  environment:
+    SLACK_WEBHOOK:
+      from_secret: slack_webhook
+  when:
+    status:
+    - failure
+
+volumes:
+- name: docker
+  host:
+    path: /var/run/docker.sock
+
+image_pull_secrets:
+- dockerconfigjson

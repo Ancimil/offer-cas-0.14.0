@@ -1,0 +1,42 @@
+{
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:61855/",
+      "sslPort": 0
+    }
+  },
+  "profiles": {
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "launchUrl": "v1/offer/swagger",
+      "environmentVariables": {
+        "RUNNING_MODE": "organization-unit-sync",
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        //"DATABASE_PASS": "7463WPb64kv7E6x",
+        //"DATABASE_HOST": "k8s-cluster.asseco.rs",
+        //"DATABASE_TYPE": "MSSQL",
+        //"DATABASE_NAME": "digital_origination",
+        //"DATABASE_PORT": "32691",
+        //"DATABASE_USER": "sa"
+      }
+    },
+    "Offer": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "api/values",
+      "environmentVariables": {
+        "DATABASE_PASS": "31d13d013d013",
+        "DATABASE_HOST": "do-dev2-database",
+        "DATABASE_TYPE": "Postgres",
+        "DATABASE_NAME": "digital_origination",
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DATABASE_PORT": "32474",
+        "DATABASE_USER": "do"
+      },
+      "applicationUrl": "http://localhost:61856/"
+    }
+  }
+}

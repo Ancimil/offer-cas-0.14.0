@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <ServerGarbageCollection>false</ServerGarbageCollection>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="EntityConfigurations\InstallmentPlanEntityTypeConfiguration.cs" />
+    <Compile Remove="EntityConfigurations\InstallmentPlanRowEntityTypeConfiguration.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="configuration\appsettings.Development.json">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="configuration\appsettings.json">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AssecoCurrencyConversion" Version="0.6.0-build017-526c1742" />
+    <PackageReference Include="AutoMapper" Version="8.1.0" />
+    <PackageReference Include="Iso8601Duration" Version="1.0.0" />
+    <PackageReference Include="System.ServiceModel.Http" Version="4.6.0" />
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Offer.Domain\Offer.Domain.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="configuration/**/*" Link="configuration\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="Always" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,305 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Offer.Domain.AggregatesModel.ApplicationAggregate.Address">
+    <Position X="36.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>AggregatesModel\ApplicationAggregate\ApplicantModel\AddressModel\Address.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Kind" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Offer.Domain.AggregatesModel.ApplicationAggregate.Party">
+    <Position X="27.5" Y="7.5" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>ABACAAAQAAAAAACAAAABAAAASAEQAAAgAAABAAAAAAE=</HashCode>
+      <FileName>AggregatesModel\ApplicationAggregate\ApplicantModel\Applicant.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ContactAddress" />
+      <Property Name="LegalAddress" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Offer.Domain.AggregatesModel.ApplicationAggregate.Application">
+    <Position X="14.5" Y="5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAEAAIAAgCAAAAAAIMQSAAAAAACAAAAAAAKYBA=</HashCode>
+      <FileName>AggregatesModel\ApplicationAggregate\Application.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Status" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Offer.Domain.AggregatesModel.ApplicationAggregate.ArrangementRequest">
+    <Position X="14" Y="12.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAABEgAAAAAAAAUAAAAAAACgAAAAAAAAEAAAAAAIIAA=</HashCode>
+      <FileName>AggregatesModel\ApplicationAggregate\ArrangementRequest.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ArrangementKind" />
+      <Property Name="ProductSnapshot" />
+      <Property Name="InstallmentPlan" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Offer.Domain.AggregatesModel.ApplicationAggregate.CardRequest">
+    <Position X="15.25" Y="17" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>AggregatesModel\ApplicationAggregate\CardRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Offer.Domain.AggregatesModel.ApplicationAggregate.Coordinates">
+    <Position X="31" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>AggregatesModel\ApplicationAggregate\ApplicantModel\AddressModel\Coordinates.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Offer.Domain.AggregatesModel.ApplicationAggregate.CreditCardFacilityRequest">
+    <Position X="14.75" Y="21.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>AggregatesModel\ApplicationAggregate\FinanceServiceRequestModel\CreditCardFacilityRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Offer.Domain.AggregatesModel.ApplicationAggregate.CreditFacilityRequest">
+    <Position X="17" Y="21.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>AggregatesModel\ApplicationAggregate\FinanceServiceRequestModel\CreditFacilityRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Offer.Domain.AggregatesModel.ApplicationAggregate.DepositRequest">
+    <Position X="12.25" Y="17" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>AggregatesModel\ApplicationAggregate\DepositRequestModel\DepositRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Offer.Domain.AggregatesModel.ApplicationAggregate.ElectronicAccessArrangementRequest">
+    <Position X="9.25" Y="17" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>AggregatesModel\ApplicationAggregate\ElectronicAccessArrangementRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Offer.Domain.AggregatesModel.ApplicationAggregate.EmploymentInfo">
+    <Position X="39" Y="14.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACACAAAAAAAAEAAAAAAAAAABCQAAAAAAAAA=</HashCode>
+      <FileName>AggregatesModel\ApplicationAggregate\ApplicantModel\EmploymentModel\EmploymentInfo.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="PositionCategory" />
+      <Property Name="EmploymentKind" />
+      <Property Name="EmployerLegalStructure" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Offer.Domain.AggregatesModel.ApplicationAggregate.FinanceServiceArrangementRequest">
+    <Position X="17.75" Y="17" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAIAAAAAAgCAAACAAAAAAAAAAAAAA=</HashCode>
+      <FileName>AggregatesModel\ApplicationAggregate\FinanceServiceRequestModel\FinanceServiceArrangementRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Offer.Domain.AggregatesModel.ApplicationAggregate.OtherProductArrangementRequest">
+    <Position X="6.25" Y="17" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>AggregatesModel\ApplicationAggregate\OtherProductArrangementRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Offer.Domain.AggregatesModel.ApplicationAggregate.OverdraftFacilityRequest">
+    <Position X="19" Y="21.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>AggregatesModel\ApplicationAggregate\FinanceServiceRequestModel\OverdraftFacilityRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Offer.Domain.AggregatesModel.ApplicationAggregate.PostalAddress">
+    <Position X="34.5" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIAAAAAAAAIAAIAAAAoAIAAAAAAAIAAAAAAAA=</HashCode>
+      <FileName>AggregatesModel\ApplicationAggregate\ApplicantModel\AddressModel\PostalAddress.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Coordinates" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Offer.Domain.AggregatesModel.ApplicationAggregate.SecuritiesArrangementRequest">
+    <Position X="21.25" Y="17" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>AggregatesModel\ApplicationAggregate\SecuritiesArrangementRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Offer.Domain.AggregatesModel.ApplicationAggregate.TelecommunicationNumber">
+    <Position X="37" Y="5.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAAAAAAAAAEAAAAAEAAAAAQAAAAAAAAAAAAA=</HashCode>
+      <FileName>AggregatesModel\ApplicationAggregate\ApplicantModel\AddressModel\TelecommunicationNumber.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Offer.Domain.AggregatesModel.ApplicationAggregate.TermLoanRequest">
+    <Position X="21.25" Y="21.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>AggregatesModel\ApplicationAggregate\FinanceServiceRequestModel\TermLoanRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Offer.Domain.AggregatesModel.ApplicationAggregate.Individual">
+    <Position X="29.75" Y="12" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AEAAAEgiBhAAAACDQQAQBIBEBAAQAEAAAQAAEgAAiKA=</HashCode>
+      <FileName>AggregatesModel\ApplicationAggregate\ApplicantModel\Applicant.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="EducationLevel" />
+      <Property Name="CarOwnership" />
+      <Property Name="Gender" />
+      <Property Name="EmploymentStatus" />
+      <Property Name="HomeOwnership" />
+      <Property Name="LifecycleStatus" />
+      <Property Name="MaritalStatus" />
+      <Property Name="HouseholdInfo" />
+      <Property Name="EmploymentInfo" />
+      <Property Name="HomePhoneNumber" />
+      <Property Name="MobilePhone" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Offer.Domain.AggregatesModel.ApplicationAggregate.Organization">
+    <Position X="24" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>AggregatesModel\ApplicationAggregate\ApplicantModel\Applicant.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Offer.Domain.AggregatesModel.ApplicationAggregate.Household">
+    <Position X="30" Y="18" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAQAAAEAAAAJAABAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>AggregatesModel\ApplicationAggregate\ApplicantModel\Applicant.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="System.Collections.Generic.List(Of T)" Collapsed="true">
+    <Position X="39.5" Y="14" Width="1.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Offer.Domain.AggregatesModel.ApplicationAggregate.ProductSnapshot">
+    <Position X="6.75" Y="10.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAACQAAEAAAogwCAAACGQAQAAAAAAAAEAAEAUEAAIAA=</HashCode>
+      <FileName>AggregatesModel\ApplicationAggregate\ProductModel\ProductSnapshot.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Offer.Domain.AggregatesModel.ApplicationAggregate.ApplicationDocument">
+    <Position X="10.25" Y="5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAECEAAARAEAAAAACAAAgAgAAAAAAAAgAAAAAAACBgg=</HashCode>
+      <FileName>AggregatesModel\ApplicationAggregate\ApplicationDocument.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Offer.Domain.AggregatesModel.ApplicationAggregate.InstallmentPlan">
+    <Position X="10" Y="13.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>AggregatesModel\ApplicationAggregate\InstallmentPlan\InstallmentPlan.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="Offer.Domain.AggregatesModel.ApplicationAggregate.AddressKind">
+    <Position X="39.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAiAAAAAQAAAAAACAAAAAAAAAgAAAAA=</HashCode>
+      <FileName>AggregatesModel\ApplicationAggregate\ApplicantModel\AddressModel\AddressKind.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Offer.Domain.AggregatesModel.ApplicationAggregate.ApplicationStatus">
+    <Position X="18.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAACAAQAAEIAgAAAAAAAAAAAAAAgAAAAAAAAAAA=</HashCode>
+      <FileName>AggregatesModel\ApplicationAggregate\ApplicationStatus.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Offer.Domain.AggregatesModel.ApplicationAggregate.ArrangementKind">
+    <Position X="18.5" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAACAACQAAAiIAAAAAAAAAAAAQAAAQAAAAAIIAA=</HashCode>
+      <FileName>AggregatesModel\ApplicationAggregate\ArrangementKind.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Offer.Domain.AggregatesModel.ApplicationAggregate.EmployerKinds">
+    <Position X="43.5" Y="17" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAACAABAAAABAAAAAQAAAAAAAEAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>AggregatesModel\ApplicationAggregate\ApplicantModel\EmploymentModel\EmployerKinds.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Offer.Domain.AggregatesModel.ApplicationAggregate.EmploymentKind">
+    <Position X="43.5" Y="19" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAQIAAAAAAAAAAAA=</HashCode>
+      <FileName>AggregatesModel\ApplicationAggregate\ApplicantModel\EmploymentModel\EmploymentKind.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Offer.Domain.AggregatesModel.ApplicationAggregate.EmploymentPositionCategory">
+    <Position X="43.5" Y="14" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAABAAAAAAAAAAAIAQAAAAEAAAAAQCACABAAAhAAA=</HashCode>
+      <FileName>AggregatesModel\ApplicationAggregate\ApplicantModel\EmploymentModel\EmploymentPositionCategory.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Offer.Domain.AggregatesModel.ApplicationAggregate.HomeOwnership">
+    <Position X="26.75" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAACAAEAAAIAAAAAAAAAAAAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>AggregatesModel\ApplicationAggregate\ApplicantModel\HomeOwnership.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Offer.Domain.AggregatesModel.ApplicationAggregate.CarOwnership">
+    <Position X="26.75" Y="15.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAACAAAAAAAAAAAAAAAAAAAAACAAAACAAAAAAA=</HashCode>
+      <FileName>AggregatesModel\ApplicationAggregate\ApplicantModel\CarOwnership.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Offer.Domain.AggregatesModel.ApplicationAggregate.EducationLevel">
+    <Position X="35" Y="16.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AggAAAAAAAAAAAAAAAIAAAAAAAAAAEoAAAACAACAgAA=</HashCode>
+      <FileName>AggregatesModel\ApplicationAggregate\ApplicantModel\EducationLevel.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Offer.Domain.AggregatesModel.ApplicationAggregate.Gender">
+    <Position X="26.75" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAABA=</HashCode>
+      <FileName>AggregatesModel\ApplicationAggregate\ApplicantModel\Gender.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Offer.Domain.AggregatesModel.ApplicationAggregate.EmploymentStatus">
+    <Position X="35" Y="14.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAAAABAAAAAAIAgEAAAACAAAACAAAAAAAAA=</HashCode>
+      <FileName>AggregatesModel\ApplicationAggregate\ApplicantModel\EmploymentModel\EmploymentStatus.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Offer.Domain.AggregatesModel.ApplicationAggregate.IndividualLifecycleStatus">
+    <Position X="33.5" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAIAAAAAAAAAAAAAAAAAQAAAAAAAQAAAAAABA=</HashCode>
+      <FileName>AggregatesModel\ApplicationAggregate\ApplicantModel\IndividualLifecycleStatus.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Offer.Domain.AggregatesModel.ApplicationAggregate.MaritalStatus">
+    <Position X="26.75" Y="17.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAAAAAAAAAAAAAAAAAKAAAAAAAAAAAAAAAEACAA=</HashCode>
+      <FileName>AggregatesModel\ApplicationAggregate\ApplicantModel\MaritalStatus.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

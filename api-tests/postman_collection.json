@@ -1,0 +1,3291 @@
+{
+	"info": {
+		"_postman_id": "5270436b-12e5-4cb8-bf76-edac99fd00e8",
+		"name": "offer-api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Product 01",
+			"item": [
+				{
+					"name": "Generate Password token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "679e312e-4eab-49d0-af86-abf4f4f1e6d2",
+								"type": "text/javascript",
+								"exec": [
+									"var json = pm.response.json();",
+									"",
+									"postman.setEnvironmentVariable(\"token\", json.access_token);"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "2a594a58-eae2-4fa5-8e2d-bcb154df471c",
+								"type": "text/javascript",
+								"exec": [
+									"if (postman.getGlobalVariable(\"secret\") === undefined) {",
+									"    postman.setGlobalVariable(\"secret\", \"secret\");",
+									"}",
+									"",
+									"//Checks status code",
+									"var checkCode = function wrapTest(expectedCode) {",
+									"    pm.test(`Expected Status Code:${expectedCode}`, function() {",
+									"        pm.response.to.have.status(expectedCode);",
+									"    });",
+									"    if (responseCode.code !== expectedCode) {",
+									"        failedTestCount++;",
+									"    }",
+									"};",
+									"",
+									"//used for assertions",
+									"var assert = function assert(testMessage, whatToAssert, expRes) {",
+									"    tests[testMessage] = whatToAssert === expRes;",
+									"    if (whatToAssert !== expRes) {",
+									"        failedTestCount++;",
+									"    }",
+									"};",
+									"",
+									"//uses any amount of arrays of ['string', json.somethingInPayload] structure to assert if the body has the key (including if it is null or 0)",
+									"var bodyHasKey = function checkIfBodyHasKey() {",
+									"    [].forEach.call(arguments, function(el) {",
+									"        if (!el[1] && el[1] === false) {",
+									"            tests[`Does response body contain key ${el[0]}`] = !el[1] && el[1] === false;",
+									"        } else if (el[1] !== 0 || el[1] === null) {",
+									"            tests[`Does response contain key ${el[0]}`] = el[1];",
+									"        } else {",
+									"            tests[`Does response contain key ${el[0]}`] = el[1] === 0 || el[1] === null;",
+									"        }",
+									"        if (!el[1]) {",
+									"            if (el[1] === 0 || el[1] === null || el[1] === false) {",
+									"                //do nothing",
+									"            } else {",
+									"                failedTestCount++;",
+									"            }",
+									"        }",
+									"    });",
+									"};",
+									"",
+									"//used to check if the key is within the values defined by the sent collection - useful for enums",
+									"var containsTest = function compare(counter, key, comparisonItem, collection) {",
+									"    tests[`Does item ${counter} have ${key} parameter and is it one of the predetermined values`] = comparisonItem && collection.indexOf(comparisonItem) > -1;",
+									"    if (!comparisonItem || collection.indexOf(comparisonItem) === -1) {",
+									"        failedTestCount++;",
+									"    }",
+									"}",
+									"",
+									"//called from test and used with failedTestCount - if any test failed, it will be logged with this data",
+									"var logResult = function log() {",
+									"    setTimeout(function(){}, 1000);",
+									"    console.log('                               ');",
+									"    console.log('Test Name: ' + request.name);",
+									"    console.log('-------------------------------');",
+									"    var r;",
+									"    var url;",
+									"    var reqBody = null;",
+									"    var resBody = null;",
+									"    if (pm.request) {",
+									"        r = pm.request;",
+									"        url = r.url.path.toString().replace(/,/g, \"/\");",
+									"        if (pm.request.body.raw) {",
+									"            reqBody = JSON.stringify(r.body.raw).replace(/\\\\t|\\\\r|\\\\n|\\\\|(\\s\\s\\s*)/g, \"\");",
+									"            reqBody = reqBody.substring(1);",
+									"            reqBody = reqBody.substring(0, reqBody.length - 1);",
+									"        }",
+									"        console.log('REQUEST: ');",
+									"        console.log('Method: ' + r.method + ' ' + url);",
+									"        if (reqBody !== null) {",
+									"            console.log('Payload: ' + reqBody);",
+									"        } else {",
+									"            console.log('Payload: (empty)');",
+									"        }",
+									"    } else {",
+									"        console.log('There is no request information available');",
+									"    }",
+									"    console.log('-------------------------------');",
+									"    if (responseBody) {",
+									"        resBody = JSON.stringify(responseBody).replace(/\\\\r|\\\\n|\\\\|(\\s\\s\\s*)/g, \"\");",
+									"        resBody = resBody.substring(1);",
+									"        resBody = resBody.substring(0, resBody.length - 1);",
+									"    }",
+									"    console.log('RESPONSE: ');",
+									"    console.log('Code: ' + pm.response.code);",
+									"    if (resBody !== null) {",
+									"        console.log('Payload: ' + resBody);",
+									"    } else {",
+									"        console.log('Payload: (empty)');",
+									"    }",
+									"    console.log('-------------------------------');",
+									"};",
+									"",
+									"postman.setEnvironmentVariable(\"checkCode\", checkCode);",
+									"postman.setEnvironmentVariable(\"assert\", assert);",
+									"postman.setEnvironmentVariable(\"bodyHasKey\", bodyHasKey);",
+									"postman.setEnvironmentVariable(\"requestResponseLogger\", logResult);",
+									"postman.setEnvironmentVariable(\"containsTest\", containsTest);"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "digital-origination-agent",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "test",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "Test123#",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "{{secret}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{env}}/v1/authentication/connect/token",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"v1",
+								"authentication",
+								"connect",
+								"token"
+							]
+						},
+						"description": "Generate Token"
+					},
+					"response": []
+				},
+				{
+					"name": "Apply Online",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d284e91d-2cfa-474d-b6c3-a8c6a9644123",
+								"type": "text/javascript",
+								"exec": [
+									"var checkCode = eval('(' + environment.checkCode + ')');",
+									"var log = eval('(' + environment.requestResponseLogger + ')');",
+									"var bodyHasKey = eval('(' + environment.bodyHasKey + ')');",
+									"var failedTestCount = 0;",
+									"",
+									"if (responseBody) {",
+									"    var json = pm.response.json();",
+									"    bodyHasKey(\"application-number\");",
+									"    if (json[\"application-number\"]) {",
+									"        postman.setEnvironmentVariable(\"application-number\", json[\"application-number\"]);",
+									"    }",
+									"}",
+									"checkCode(200);",
+									"",
+									"if (failedTestCount > 0) {",
+									"    log();",
+									"}"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "e08c4607-9ca1-48d2-bc94-ee199d04a117",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{  \r\n   \"country-code\":\"RS\",\r\n   \"identification-number\":\"0106996710141\",\r\n   \"mobile-phone-prefix\":\"+381\",\r\n   \"given-name\":\"Niko\",\r\n   \"surname\":\"Neko\",\r\n   \"parent-name\":\"Tamo\",\r\n   \"maiden-name\":\"Mikica\",\r\n   \"mobile-phone\":\"+381123123\",\r\n   \"agree-to-privacy-policy\":true,\r\n   \"email-address\":\"email@jsontoswift.com\",\r\n   \"receive-marketing-materials\":true,\r\n   \"preffered-culture\":\"sr-Latn-RS\",\r\n   \"product-code\":\"0001\",\r\n   \"product-name\":\"Cash loan in EUR\",\r\n   \"amount\":5000,\r\n   \"currency\":\"EUR\",\r\n   \"annuity\":298.97,\r\n   \"term\":18,\r\n   \"identification-number-kind\":\"personal-id-number\",\r\n   \"residential-status\": \"something\",\r\n   \"country-of-residence\": \"biasr\"\r\n}"
+						},
+						"url": {
+							"raw": "{{env}}/v1/offer/applications",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"v1",
+								"offer",
+								"applications"
+							]
+						},
+						"description": "POST /applications"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Composition documents for application",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f3122f59-f210-4f77-b403-7ca8050feb76",
+								"type": "text/javascript",
+								"exec": [
+									"var checkCode = eval('(' + environment.checkCode + ')');",
+									"var log = eval('(' + environment.requestResponseLogger + ')');",
+									"var bodyHasKey = eval('(' + environment.bodyHasKey + ')');",
+									"var assert = eval('(' + environment.assert + ')');",
+									"",
+									"var failedTestCount = 0;",
+									"",
+									"if (responseBody) {",
+									"    var json = pm.response.json();",
+									"    bodyHasKey([`documents`, json.documents]);",
+									"    if (json.documents) {",
+									"        var documents = json.documents;",
+									"        var documentCount = 0;",
+									"        documents.forEach(function(element, i){",
+									"            assert(`Is document status empty for document ${element[\"document-name\"]}`, element.status, 'empty');",
+									"            documentCount++;",
+									"        });",
+									"        ",
+									"        assert(`Is the amount of documents for composition correct (3)`, documentCount, 3);",
+									"        ",
+									"        postman.setEnvironmentVariable(\"document-id\", documents[0][\"document-id\"]);",
+									"",
+									"        postman.setEnvironmentVariable(\"document-id-1\", documents[1][\"document-id\"]);",
+									"",
+									"        postman.setEnvironmentVariable(\"document-id-2\", documents[2][\"document-id\"]);",
+									"    } else {",
+									"        failedTestCount++;",
+									"    }",
+									"}",
+									"checkCode(200);",
+									"",
+									"if (failedTestCount > 0) {",
+									"    log();",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"given-name\":\"Aleksandar\",\n  \"surname\":\"Milutinovic\",\n  \"parent-name\":\"Mi\",\n  \"identification-number\":\"0301992780087\",\n  \"mobile-phone\":\"+3816\",\n  \"email-address\":\"aleksandar.milutinovic@asseco-see.rs\",\n  \"receive-marketing-materials\":true,\n  \"agree-terms-and-conditions\":true,\n  \"product\":\"Cash loan in RSD\",\n  \"annuity\":\"33103.30\",\n  \"amount\":800000,\n  \"term\":27,\n  \"interest-rate\":\"9.71\",\n  \"product-code\":\"0002\",\n  \"product-name\":\"Cash loan in RSD\",\n  \"currency\":\"RSD\",\n  \"identification-number-kind\":\"personal-id-number\"\n}"
+						},
+						"url": {
+							"raw": "{{env}}/v1/offer/applications/{{application-number}}/documents-for-composition",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"v1",
+								"offer",
+								"applications",
+								"{{application-number}}",
+								"documents-for-composition"
+							]
+						},
+						"description": "GET /applications/{application-number}/documents-for-composition"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Acceptance documents - Status empty",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "5645f039-3895-437e-8a7b-2d37b4eba5d9",
+								"type": "text/javascript",
+								"exec": [
+									"var checkCode = eval('(' + environment.checkCode + ')');",
+									"var log = eval('(' + environment.requestResponseLogger + ')');",
+									"var bodyHasKey = eval('(' + environment.bodyHasKey + ')');",
+									"var assert = eval('(' + environment.assert + ')');",
+									"",
+									"var failedTestCount = 0;",
+									"",
+									"if (responseBody) {",
+									"    var json = pm.response.json();",
+									"    bodyHasKey([`documents`, json.documents]);",
+									"    if (json.documents) {",
+									"        var documents = json.documents;",
+									"        var documentCount = 0;",
+									"        documents.forEach(function(element, i){",
+									"            assert(`Is document status empty for document ${element[\"document-name\"]}`, element.status, 'empty');",
+									"            documentCount++;",
+									"        });",
+									"            assert(`Is the amount of documents for composition correct (3)`, documentCount, 3);",
+									"    } else {",
+									"        failedTestCount++;",
+									"    }",
+									"}",
+									"checkCode(200);",
+									"",
+									"if (failedTestCount > 0) {",
+									"    log();",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"given-name\":\"Aleksandar\",\n  \"surname\":\"Milutinovic\",\n  \"parent-name\":\"Mi\",\n  \"identification-number\":\"0301992780087\",\n  \"mobile-phone\":\"+3816\",\n  \"email-address\":\"aleksandar.milutinovic@asseco-see.rs\",\n  \"receive-marketing-materials\":true,\n  \"agree-terms-and-conditions\":true,\n  \"product\":\"Cash loan in RSD\",\n  \"annuity\":\"33103.30\",\n  \"amount\":800000,\n  \"term\":27,\n  \"interest-rate\":\"9.71\",\n  \"product-code\":\"0002\",\n  \"product-name\":\"Cash loan in RSD\",\n  \"currency\":\"RSD\",\n  \"identification-number-kind\":\"personal-id-number\"\n}"
+						},
+						"url": {
+							"raw": "{{env}}/v1/offer/applications/{{application-number}}/documents-for-acceptance",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"v1",
+								"offer",
+								"applications",
+								"{{application-number}}",
+								"documents-for-acceptance"
+							]
+						},
+						"description": "GET /applications/{application-number}/documents-for-acceptance"
+					},
+					"response": []
+				},
+				{
+					"name": "Set Status of all documents to \"Composed\"",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "2d10601a-dab3-4c99-86dd-ca162da05cd7",
+								"type": "text/javascript",
+								"exec": [
+									"var checkCode = eval('(' + environment.checkCode + ')');",
+									"var log = eval('(' + environment.requestResponseLogger + ')');",
+									"var bodyHasKey = eval('(' + environment.bodyHasKey + ')');",
+									"var failedTestCount = 0;",
+									"",
+									"checkCode(200);",
+									"",
+									"if (failedTestCount > 0) {",
+									"    log();",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n     \"document-ids\": [{{document-id}}, {{document-id-1}}, {{document-id-2}}],\r\n     \"status\": \"composed\"\r\n}"
+						},
+						"url": {
+							"raw": "{{env}}/v1/offer/applications/{{application-number}}/documents/status-update",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"v1",
+								"offer",
+								"applications",
+								"{{application-number}}",
+								"documents",
+								"status-update"
+							]
+						},
+						"description": "PATCH /applications/{application-number}/documents/status-update"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Composition Documents Status",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d0f13c8e-7a24-4cf7-aaf7-4deac3618eee",
+								"type": "text/javascript",
+								"exec": [
+									"var checkCode = eval('(' + environment.checkCode + ')');",
+									"var log = eval('(' + environment.requestResponseLogger + ')');",
+									"var bodyHasKey = eval('(' + environment.bodyHasKey + ')');",
+									"var assert = eval('(' + environment.assert + ')');",
+									"var failedTestCount = 0;",
+									"",
+									"if (responseBody) {",
+									"    var json = pm.response.json();",
+									"    bodyHasKey([`documents`, json.documents]);",
+									"    if (json.documents) {",
+									"        var documents = json.documents;",
+									"        documents.forEach(function(element, i) {",
+									"            assert(`Is document status composed for document ${element[\"document-name\"]}`, element.status, 'composed');",
+									"        });",
+									"    }",
+									"}",
+									"checkCode(200);",
+									"",
+									"if (failedTestCount > 0) {",
+									"    log();",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"given-name\":\"Aleksandar\",\n  \"surname\":\"Milutinovic\",\n  \"parent-name\":\"Mi\",\n  \"identification-number\":\"0301992780087\",\n  \"mobile-phone\":\"+3816\",\n  \"email-address\":\"aleksandar.milutinovic@asseco-see.rs\",\n  \"receive-marketing-materials\":true,\n  \"agree-terms-and-conditions\":true,\n  \"product\":\"Cash loan in RSD\",\n  \"annuity\":\"33103.30\",\n  \"amount\":800000,\n  \"term\":27,\n  \"interest-rate\":\"9.71\",\n  \"product-code\":\"0002\",\n  \"product-name\":\"Cash loan in RSD\",\n  \"currency\":\"RSD\",\n  \"identification-number-kind\":\"personal-id-number\"\n}"
+						},
+						"url": {
+							"raw": "{{env}}/v1/offer/applications/{{application-number}}/documents-for-composition",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"v1",
+								"offer",
+								"applications",
+								"{{application-number}}",
+								"documents-for-composition"
+							]
+						},
+						"description": "GET /applications/{application-number}/documents-for-composition"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Acceptance Documents And Expect All documents are there",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "c47319cc-defc-46d1-ba31-3c3535ac0a27",
+								"type": "text/javascript",
+								"exec": [
+									"var checkCode = eval('(' + environment.checkCode + ')');",
+									"var log = eval('(' + environment.requestResponseLogger + ')');",
+									"var bodyHasKey = eval('(' + environment.bodyHasKey + ')');",
+									"var assert = eval('(' + environment.assert + ')');",
+									"var failedTestCount = 0;",
+									"",
+									"if (responseBody) {",
+									"    var json = pm.response.json();",
+									"    bodyHasKey(\"documents\");",
+									"    if (json.documents) {",
+									"        json.documents.forEach(function(element, i) {",
+									"            assert(`Is document status composed for document ${i + 1}`, element[\"status\"], 'composed');",
+									"        });",
+									"    }",
+									"}",
+									"checkCode(200);",
+									"",
+									"if (failedTestCount > 0) {",
+									"    log();",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"given-name\":\"Aleksandar\",\n  \"surname\":\"Milutinovic\",\n  \"parent-name\":\"Mi\",\n  \"identification-number\":\"0301992780087\",\n  \"mobile-phone\":\"+3816\",\n  \"email-address\":\"aleksandar.milutinovic@asseco-see.rs\",\n  \"receive-marketing-materials\":true,\n  \"agree-terms-and-conditions\":true,\n  \"product\":\"Cash loan in RSD\",\n  \"annuity\":\"33103.30\",\n  \"amount\":800000,\n  \"term\":27,\n  \"interest-rate\":\"9.71\",\n  \"product-code\":\"0002\",\n  \"product-name\":\"Cash loan in RSD\",\n  \"currency\":\"RSD\",\n  \"identification-number-kind\":\"personal-id-number\"\n}"
+						},
+						"url": {
+							"raw": "{{env}}/v1/offer/applications/{{application-number}}/documents-for-acceptance",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"v1",
+								"offer",
+								"applications",
+								"{{application-number}}",
+								"documents-for-acceptance"
+							]
+						},
+						"description": "GET /applications/{application-number}/documents-for-acceptance"
+					},
+					"response": []
+				},
+				{
+					"name": "Set Status of all documents to \"accepted-by-customer\"",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "2d10601a-dab3-4c99-86dd-ca162da05cd7",
+								"type": "text/javascript",
+								"exec": [
+									"var checkCode = eval('(' + environment.checkCode + ')');",
+									"var log = eval('(' + environment.requestResponseLogger + ')');",
+									"var bodyHasKey = eval('(' + environment.bodyHasKey + ')');",
+									"var failedTestCount = 0;",
+									"",
+									"checkCode(200);",
+									"",
+									"if (failedTestCount > 0) {",
+									"    log();",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n     \"document-ids\": [{{document-id}}, {{document-id-1}}, {{document-id-2}}],\r\n     \"status\": \"accepted-by-customer\"\r\n}"
+						},
+						"url": {
+							"raw": "{{env}}/v1/offer/applications/{{application-number}}/documents/status-update",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"v1",
+								"offer",
+								"applications",
+								"{{application-number}}",
+								"documents",
+								"status-update"
+							]
+						},
+						"description": "PATCH /applications/{application-number}/documents/status-update"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Accepted Documents",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e0eb8454-7318-4229-bcfc-60e74a59b4a2",
+								"type": "text/javascript",
+								"exec": [
+									"var checkCode = eval('(' + environment.checkCode + ')');",
+									"var log = eval('(' + environment.requestResponseLogger + ')');",
+									"var bodyHasKey = eval('(' + environment.bodyHasKey + ')');",
+									"var assert = eval('(' + environment.assert + ')');",
+									"var failedTestCount = 0;",
+									"",
+									"if (responseBody) {",
+									"    var json = pm.response.json();",
+									"    bodyHasKey(\"documents\");",
+									"    if (json.documents) {",
+									"        json.documents.forEach(function(element, i) {",
+									"            assert(`Is document status accepted-by-customer for document ${i + 1}`, element[\"status\"], 'accepted-by-customer');",
+									"        });",
+									"    }",
+									"}",
+									"checkCode(200);",
+									"",
+									"if (failedTestCount > 0) {",
+									"    log();",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"given-name\":\"Aleksandar\",\n  \"surname\":\"Milutinovic\",\n  \"parent-name\":\"Mi\",\n  \"identification-number\":\"0301992780087\",\n  \"mobile-phone\":\"+3816\",\n  \"email-address\":\"aleksandar.milutinovic@asseco-see.rs\",\n  \"receive-marketing-materials\":true,\n  \"agree-terms-and-conditions\":true,\n  \"product\":\"Cash loan in RSD\",\n  \"annuity\":\"33103.30\",\n  \"amount\":800000,\n  \"term\":27,\n  \"interest-rate\":\"9.71\",\n  \"product-code\":\"0002\",\n  \"product-name\":\"Cash loan in RSD\",\n  \"currency\":\"RSD\",\n  \"identification-number-kind\":\"personal-id-number\"\n}"
+						},
+						"url": {
+							"raw": "{{env}}/v1/offer/applications/{{application-number}}/documents-for-acceptance",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"v1",
+								"offer",
+								"applications",
+								"{{application-number}}",
+								"documents-for-acceptance"
+							]
+						},
+						"description": "GET /applications/{application-number}/documents-for-acceptance"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Product 02",
+			"item": [
+				{
+					"name": "Generate Password token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "679e312e-4eab-49d0-af86-abf4f4f1e6d2",
+								"type": "text/javascript",
+								"exec": [
+									"var json = pm.response.json();",
+									"",
+									"postman.setEnvironmentVariable(\"token\", json.access_token);"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "2a594a58-eae2-4fa5-8e2d-bcb154df471c",
+								"type": "text/javascript",
+								"exec": [
+									"if (postman.getGlobalVariable(\"secret\") === undefined) {",
+									"    postman.setGlobalVariable(\"secret\", \"secret\");",
+									"}",
+									"",
+									"//Checks status code",
+									"var checkCode = function wrapTest(expectedCode) {",
+									"    pm.test(`Expected Status Code:${expectedCode}`, function() {",
+									"        pm.response.to.have.status(expectedCode);",
+									"    });",
+									"    if (responseCode.code !== expectedCode) {",
+									"        failedTestCount++;",
+									"    }",
+									"};",
+									"",
+									"//used for assertions",
+									"var assert = function assert(testMessage, whatToAssert, expRes) {",
+									"    tests[testMessage] = whatToAssert === expRes;",
+									"    if (whatToAssert !== expRes) {",
+									"        failedTestCount++;",
+									"    }",
+									"};",
+									"",
+									"//uses any amount of arrays of ['string', json.somethingInPayload] structure to assert if the body has the key (including if it is null or 0)",
+									"var bodyHasKey = function checkIfBodyHasKey() {",
+									"    [].forEach.call(arguments, function(el) {",
+									"        if (!el[1] && el[1] === false) {",
+									"            tests[`Does response body contain key ${el[0]}`] = !el[1] && el[1] === false;",
+									"        } else if (el[1] !== 0 || el[1] === null) {",
+									"            tests[`Does response contain key ${el[0]}`] = el[1];",
+									"        } else {",
+									"            tests[`Does response contain key ${el[0]}`] = el[1] === 0 || el[1] === null;",
+									"        }",
+									"        if (!el[1]) {",
+									"            if (el[1] === 0 || el[1] === null || el[1] === false) {",
+									"                //do nothing",
+									"            } else {",
+									"                failedTestCount++;",
+									"            }",
+									"        }",
+									"    });",
+									"};",
+									"",
+									"//used to check if the key is within the values defined by the sent collection - useful for enums",
+									"var containsTest = function compare(counter, key, comparisonItem, collection) {",
+									"    tests[`Does item ${counter} have ${key} parameter and is it one of the predetermined values`] = comparisonItem && collection.indexOf(comparisonItem) > -1;",
+									"    if (!comparisonItem || collection.indexOf(comparisonItem) === -1) {",
+									"        failedTestCount++;",
+									"    }",
+									"}",
+									"",
+									"//called from test and used with failedTestCount - if any test failed, it will be logged with this data",
+									"var logResult = function log() {",
+									"    setTimeout(function(){}, 1000);",
+									"    console.log('                               ');",
+									"    console.log('Test Name: ' + request.name);",
+									"    console.log('-------------------------------');",
+									"    var r;",
+									"    var url;",
+									"    var reqBody = null;",
+									"    var resBody = null;",
+									"    if (pm.request) {",
+									"        r = pm.request;",
+									"        url = r.url.path.toString().replace(/,/g, \"/\");",
+									"        if (pm.request.body.raw) {",
+									"            reqBody = JSON.stringify(r.body.raw).replace(/\\\\t|\\\\r|\\\\n|\\\\|(\\s\\s\\s*)/g, \"\");",
+									"            reqBody = reqBody.substring(1);",
+									"            reqBody = reqBody.substring(0, reqBody.length - 1);",
+									"        }",
+									"        console.log('REQUEST: ');",
+									"        console.log('Method: ' + r.method + ' ' + url);",
+									"        if (reqBody !== null) {",
+									"            console.log('Payload: ' + reqBody);",
+									"        } else {",
+									"            console.log('Payload: (empty)');",
+									"        }",
+									"    } else {",
+									"        console.log('There is no request information available');",
+									"    }",
+									"    console.log('-------------------------------');",
+									"    if (responseBody) {",
+									"        resBody = JSON.stringify(responseBody).replace(/\\\\r|\\\\n|\\\\|(\\s\\s\\s*)/g, \"\");",
+									"        resBody = resBody.substring(1);",
+									"        resBody = resBody.substring(0, resBody.length - 1);",
+									"    }",
+									"    console.log('RESPONSE: ');",
+									"    console.log('Code: ' + pm.response.code);",
+									"    if (resBody !== null) {",
+									"        console.log('Payload: ' + resBody);",
+									"    } else {",
+									"        console.log('Payload: (empty)');",
+									"    }",
+									"    console.log('-------------------------------');",
+									"};",
+									"",
+									"postman.setEnvironmentVariable(\"checkCode\", checkCode);",
+									"postman.setEnvironmentVariable(\"assert\", assert);",
+									"postman.setEnvironmentVariable(\"bodyHasKey\", bodyHasKey);",
+									"postman.setEnvironmentVariable(\"requestResponseLogger\", logResult);",
+									"postman.setEnvironmentVariable(\"containsTest\", containsTest);"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "digital-origination-agent",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "test",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "Test123#",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "{{secret}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{env}}/v1/authentication/connect/token",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"v1",
+								"authentication",
+								"connect",
+								"token"
+							]
+						},
+						"description": "Generate Token"
+					},
+					"response": []
+				},
+				{
+					"name": "Apply Online",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d284e91d-2cfa-474d-b6c3-a8c6a9644123",
+								"type": "text/javascript",
+								"exec": [
+									"var checkCode = eval('(' + environment.checkCode + ')');",
+									"var log = eval('(' + environment.requestResponseLogger + ')');",
+									"var bodyHasKey = eval('(' + environment.bodyHasKey + ')');",
+									"var failedTestCount = 0;",
+									"",
+									"if (responseBody) {",
+									"    var json = pm.response.json();",
+									"    bodyHasKey(\"application-number\");",
+									"    if (json[\"application-number\"]) {",
+									"        postman.setEnvironmentVariable(\"application-number\", json[\"application-number\"]);",
+									"    }",
+									"}",
+									"checkCode(200);",
+									"",
+									"if (failedTestCount > 0) {",
+									"    log();",
+									"}"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "e08c4607-9ca1-48d2-bc94-ee199d04a117",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{  \r\n   \"country-code\":\"RS\",\r\n   \"identification-number\":\"0106996710141\",\r\n   \"mobile-phone-prefix\":\"+381\",\r\n   \"given-name\":\"Niko\",\r\n   \"surname\":\"Neko\",\r\n   \"parent-name\":\"Tamo\",\r\n   \"maiden-name\":\"Mikica\",\r\n   \"mobile-phone\":\"+381123123\",\r\n   \"agree-to-privacy-policy\":true,\r\n   \"email-address\":\"email@jsontoswift.com\",\r\n   \"receive-marketing-materials\":true,\r\n   \"preffered-culture\":\"sr-Latn-RS\",\r\n   \"product-code\":\"0002\",\r\n   \"product-name\":\"Cash loan in EUR\",\r\n   \"amount\":5000,\r\n   \"currency\":\"EUR\",\r\n   \"annuity\":298.97,\r\n   \"term\":18,\r\n   \"identification-number-kind\":\"personal-id-number\",\r\n   \"residential-status\": \"something\",\r\n   \"country-of-residence\": \"biasr\"\r\n}"
+						},
+						"url": {
+							"raw": "{{env}}/v1/offer/applications",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"v1",
+								"offer",
+								"applications"
+							]
+						},
+						"description": "POST /applications"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Composition documents for application",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f3122f59-f210-4f77-b403-7ca8050feb76",
+								"type": "text/javascript",
+								"exec": [
+									"var checkCode = eval('(' + environment.checkCode + ')');",
+									"var log = eval('(' + environment.requestResponseLogger + ')');",
+									"var bodyHasKey = eval('(' + environment.bodyHasKey + ')');",
+									"var assert = eval('(' + environment.assert + ')');",
+									"",
+									"var failedTestCount = 0;",
+									"",
+									"if (responseBody) {",
+									"    var json = pm.response.json();",
+									"    bodyHasKey([`documents`, json.documents]);",
+									"    if (json.documents) {",
+									"        var documents = json.documents;",
+									"        var documentCount = 0;",
+									"        documents.forEach(function(element, i){",
+									"            assert(`Is document status empty for document ${element[\"document-name\"]}`, element.status, 'empty');",
+									"            documentCount++;",
+									"        });",
+									"        ",
+									"        assert(`Is the amount of documents for composition correct (3)`, documentCount, 3);",
+									"        ",
+									"        postman.setEnvironmentVariable(\"document-id\", documents[0][\"document-id\"]);",
+									"",
+									"        postman.setEnvironmentVariable(\"document-id-1\", documents[1][\"document-id\"]);",
+									"",
+									"        postman.setEnvironmentVariable(\"document-id-2\", documents[2][\"document-id\"]);",
+									"    } else {",
+									"        failedTestCount++;",
+									"    }",
+									"}",
+									"checkCode(200);",
+									"",
+									"if (failedTestCount > 0) {",
+									"    log();",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"given-name\":\"Aleksandar\",\n  \"surname\":\"Milutinovic\",\n  \"parent-name\":\"Mi\",\n  \"identification-number\":\"0301992780087\",\n  \"mobile-phone\":\"+3816\",\n  \"email-address\":\"aleksandar.milutinovic@asseco-see.rs\",\n  \"receive-marketing-materials\":true,\n  \"agree-terms-and-conditions\":true,\n  \"product\":\"Cash loan in RSD\",\n  \"annuity\":\"33103.30\",\n  \"amount\":800000,\n  \"term\":27,\n  \"interest-rate\":\"9.71\",\n  \"product-code\":\"0002\",\n  \"product-name\":\"Cash loan in RSD\",\n  \"currency\":\"RSD\",\n  \"identification-number-kind\":\"personal-id-number\"\n}"
+						},
+						"url": {
+							"raw": "{{env}}/v1/offer/applications/{{application-number}}/documents-for-composition",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"v1",
+								"offer",
+								"applications",
+								"{{application-number}}",
+								"documents-for-composition"
+							]
+						},
+						"description": "GET /applications/{application-number}/documents-for-composition"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Acceptance documents - Status empty",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "5645f039-3895-437e-8a7b-2d37b4eba5d9",
+								"type": "text/javascript",
+								"exec": [
+									"var checkCode = eval('(' + environment.checkCode + ')');",
+									"var log = eval('(' + environment.requestResponseLogger + ')');",
+									"var bodyHasKey = eval('(' + environment.bodyHasKey + ')');",
+									"var assert = eval('(' + environment.assert + ')');",
+									"",
+									"var failedTestCount = 0;",
+									"",
+									"if (responseBody) {",
+									"    var json = pm.response.json();",
+									"    bodyHasKey([`documents`, json.documents]);",
+									"    if (json.documents) {",
+									"        var documents = json.documents;",
+									"        var documentCount = 0;",
+									"        documents.forEach(function(element, i){",
+									"            assert(`Is document status empty for document ${element[\"document-name\"]}`, element.status, 'empty');",
+									"            documentCount++;",
+									"        });",
+									"            assert(`Is the amount of documents for composition correct (3)`, documentCount, 3);",
+									"    } else {",
+									"        failedTestCount++;",
+									"    }",
+									"}",
+									"checkCode(200);",
+									"",
+									"if (failedTestCount > 0) {",
+									"    log();",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"given-name\":\"Aleksandar\",\n  \"surname\":\"Milutinovic\",\n  \"parent-name\":\"Mi\",\n  \"identification-number\":\"0301992780087\",\n  \"mobile-phone\":\"+3816\",\n  \"email-address\":\"aleksandar.milutinovic@asseco-see.rs\",\n  \"receive-marketing-materials\":true,\n  \"agree-terms-and-conditions\":true,\n  \"product\":\"Cash loan in RSD\",\n  \"annuity\":\"33103.30\",\n  \"amount\":800000,\n  \"term\":27,\n  \"interest-rate\":\"9.71\",\n  \"product-code\":\"0002\",\n  \"product-name\":\"Cash loan in RSD\",\n  \"currency\":\"RSD\",\n  \"identification-number-kind\":\"personal-id-number\"\n}"
+						},
+						"url": {
+							"raw": "{{env}}/v1/offer/applications/{{application-number}}/documents-for-acceptance",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"v1",
+								"offer",
+								"applications",
+								"{{application-number}}",
+								"documents-for-acceptance"
+							]
+						},
+						"description": "GET /applications/{application-number}/documents-for-acceptance"
+					},
+					"response": []
+				},
+				{
+					"name": "Set Status of all documents to \"Composed\"",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "2d10601a-dab3-4c99-86dd-ca162da05cd7",
+								"type": "text/javascript",
+								"exec": [
+									"var checkCode = eval('(' + environment.checkCode + ')');",
+									"var log = eval('(' + environment.requestResponseLogger + ')');",
+									"var bodyHasKey = eval('(' + environment.bodyHasKey + ')');",
+									"var failedTestCount = 0;",
+									"",
+									"checkCode(200);",
+									"",
+									"if (failedTestCount > 0) {",
+									"    log();",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n     \"document-ids\": [{{document-id}}, {{document-id-1}}, {{document-id-2}}],\r\n     \"status\": \"composed\"\r\n}"
+						},
+						"url": {
+							"raw": "{{env}}/v1/offer/applications/{{application-number}}/documents/status-update",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"v1",
+								"offer",
+								"applications",
+								"{{application-number}}",
+								"documents",
+								"status-update"
+							]
+						},
+						"description": "PATCH /applications/{application-number}/documents/status-update"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Composition Documents Status",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d0f13c8e-7a24-4cf7-aaf7-4deac3618eee",
+								"type": "text/javascript",
+								"exec": [
+									"var checkCode = eval('(' + environment.checkCode + ')');",
+									"var log = eval('(' + environment.requestResponseLogger + ')');",
+									"var bodyHasKey = eval('(' + environment.bodyHasKey + ')');",
+									"var assert = eval('(' + environment.assert + ')');",
+									"var failedTestCount = 0;",
+									"",
+									"if (responseBody) {",
+									"    var json = pm.response.json();",
+									"    bodyHasKey([`documents`, json.documents]);",
+									"    if (json.documents) {",
+									"        var documents = json.documents;",
+									"        documents.forEach(function(element, i) {",
+									"            assert(`Is document status composed for document ${element[\"document-name\"]}`, element.status, 'composed');",
+									"        });",
+									"    }",
+									"}",
+									"checkCode(200);",
+									"",
+									"if (failedTestCount > 0) {",
+									"    log();",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"given-name\":\"Aleksandar\",\n  \"surname\":\"Milutinovic\",\n  \"parent-name\":\"Mi\",\n  \"identification-number\":\"0301992780087\",\n  \"mobile-phone\":\"+3816\",\n  \"email-address\":\"aleksandar.milutinovic@asseco-see.rs\",\n  \"receive-marketing-materials\":true,\n  \"agree-terms-and-conditions\":true,\n  \"product\":\"Cash loan in RSD\",\n  \"annuity\":\"33103.30\",\n  \"amount\":800000,\n  \"term\":27,\n  \"interest-rate\":\"9.71\",\n  \"product-code\":\"0002\",\n  \"product-name\":\"Cash loan in RSD\",\n  \"currency\":\"RSD\",\n  \"identification-number-kind\":\"personal-id-number\"\n}"
+						},
+						"url": {
+							"raw": "{{env}}/v1/offer/applications/{{application-number}}/documents-for-composition",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"v1",
+								"offer",
+								"applications",
+								"{{application-number}}",
+								"documents-for-composition"
+							]
+						},
+						"description": "GET /applications/{application-number}/documents-for-composition"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Acceptance Documents And Expect All documents are there",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "c47319cc-defc-46d1-ba31-3c3535ac0a27",
+								"type": "text/javascript",
+								"exec": [
+									"var checkCode = eval('(' + environment.checkCode + ')');",
+									"var log = eval('(' + environment.requestResponseLogger + ')');",
+									"var bodyHasKey = eval('(' + environment.bodyHasKey + ')');",
+									"var assert = eval('(' + environment.assert + ')');",
+									"var failedTestCount = 0;",
+									"",
+									"if (responseBody) {",
+									"    var json = pm.response.json();",
+									"    bodyHasKey(\"documents\");",
+									"    if (json.documents) {",
+									"        json.documents.forEach(function(element, i) {",
+									"            assert(`Is document status composed for document ${i + 1}`, element[\"status\"], 'composed');",
+									"        });",
+									"    }",
+									"}",
+									"checkCode(200);",
+									"",
+									"if (failedTestCount > 0) {",
+									"    log();",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"given-name\":\"Aleksandar\",\n  \"surname\":\"Milutinovic\",\n  \"parent-name\":\"Mi\",\n  \"identification-number\":\"0301992780087\",\n  \"mobile-phone\":\"+3816\",\n  \"email-address\":\"aleksandar.milutinovic@asseco-see.rs\",\n  \"receive-marketing-materials\":true,\n  \"agree-terms-and-conditions\":true,\n  \"product\":\"Cash loan in RSD\",\n  \"annuity\":\"33103.30\",\n  \"amount\":800000,\n  \"term\":27,\n  \"interest-rate\":\"9.71\",\n  \"product-code\":\"0002\",\n  \"product-name\":\"Cash loan in RSD\",\n  \"currency\":\"RSD\",\n  \"identification-number-kind\":\"personal-id-number\"\n}"
+						},
+						"url": {
+							"raw": "{{env}}/v1/offer/applications/{{application-number}}/documents-for-acceptance",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"v1",
+								"offer",
+								"applications",
+								"{{application-number}}",
+								"documents-for-acceptance"
+							]
+						},
+						"description": "GET /applications/{application-number}/documents-for-acceptance"
+					},
+					"response": []
+				},
+				{
+					"name": "Set Status of all documents to \"accepted-by-customer\"",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "2d10601a-dab3-4c99-86dd-ca162da05cd7",
+								"type": "text/javascript",
+								"exec": [
+									"var checkCode = eval('(' + environment.checkCode + ')');",
+									"var log = eval('(' + environment.requestResponseLogger + ')');",
+									"var bodyHasKey = eval('(' + environment.bodyHasKey + ')');",
+									"var failedTestCount = 0;",
+									"",
+									"checkCode(200);",
+									"",
+									"if (failedTestCount > 0) {",
+									"    log();",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n     \"document-ids\": [{{document-id}}, {{document-id-1}}, {{document-id-2}}],\r\n     \"status\": \"accepted-by-customer\"\r\n}"
+						},
+						"url": {
+							"raw": "{{env}}/v1/offer/applications/{{application-number}}/documents/status-update",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"v1",
+								"offer",
+								"applications",
+								"{{application-number}}",
+								"documents",
+								"status-update"
+							]
+						},
+						"description": "PATCH /applications/{application-number}/documents/status-update"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Accepted Documents",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e0eb8454-7318-4229-bcfc-60e74a59b4a2",
+								"type": "text/javascript",
+								"exec": [
+									"var checkCode = eval('(' + environment.checkCode + ')');",
+									"var log = eval('(' + environment.requestResponseLogger + ')');",
+									"var bodyHasKey = eval('(' + environment.bodyHasKey + ')');",
+									"var assert = eval('(' + environment.assert + ')');",
+									"var failedTestCount = 0;",
+									"",
+									"if (responseBody) {",
+									"    var json = pm.response.json();",
+									"    bodyHasKey(\"documents\");",
+									"    if (json.documents) {",
+									"        json.documents.forEach(function(element, i) {",
+									"            assert(`Is document status accepted-by-customer for document ${i + 1}`, element[\"status\"], 'accepted-by-customer');",
+									"        });",
+									"    }",
+									"}",
+									"checkCode(200);",
+									"",
+									"if (failedTestCount > 0) {",
+									"    log();",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"given-name\":\"Aleksandar\",\n  \"surname\":\"Milutinovic\",\n  \"parent-name\":\"Mi\",\n  \"identification-number\":\"0301992780087\",\n  \"mobile-phone\":\"+3816\",\n  \"email-address\":\"aleksandar.milutinovic@asseco-see.rs\",\n  \"receive-marketing-materials\":true,\n  \"agree-terms-and-conditions\":true,\n  \"product\":\"Cash loan in RSD\",\n  \"annuity\":\"33103.30\",\n  \"amount\":800000,\n  \"term\":27,\n  \"interest-rate\":\"9.71\",\n  \"product-code\":\"0002\",\n  \"product-name\":\"Cash loan in RSD\",\n  \"currency\":\"RSD\",\n  \"identification-number-kind\":\"personal-id-number\"\n}"
+						},
+						"url": {
+							"raw": "{{env}}/v1/offer/applications/{{application-number}}/documents-for-acceptance",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"v1",
+								"offer",
+								"applications",
+								"{{application-number}}",
+								"documents-for-acceptance"
+							]
+						},
+						"description": "GET /applications/{application-number}/documents-for-acceptance"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Questionnaire",
+			"item": [
+				{
+					"name": "Apply online",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e26c4336-0b6d-4078-9d78-d77d3286df76",
+								"type": "text/javascript",
+								"exec": [
+									"var checkCode = eval('(' + environment.checkCode + ')');",
+									"var log = eval('(' + environment.requestResponseLogger + ')');",
+									"var bodyHasKey = eval('(' + environment.bodyHasKey + ')');",
+									"var failedTestCount = 0;",
+									"",
+									"if (responseBody) {",
+									"    var json = pm.response.json();",
+									"    bodyHasKey([`application number`, json[\"application-number\"]]);",
+									"    if (json[\"application-number\"]) {",
+									"        postman.setEnvironmentVariable(\"application-number\", json[\"application-number\"]);",
+									"    }",
+									"}",
+									"checkCode(200);",
+									"",
+									"if (failedTestCount > 0) {",
+									"    log();",
+									"}"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "b3435279-d971-406b-ac9b-94727ca8b1d8",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"given-name\":\"Marko\",\n  \"surname\":\"Milutinovic\",\n  \"parent-name\":\"Mi\",\n  \"identification-number\":\"0301992780087\",\n  \"mobile-phone\":\"+3816\",\n  \"email-address\":\"asseco-test@mailinator.com\",\n  \"receive-marketing-materials\":true,\n  \"agree-terms-and-conditions\":true,\n  \"product\":\"Car loan\",\n  \"annuity\":\"11275.53\",\n  \"amount\":400000,\n  \"term\":42,\n  \"interest-rate\":\"9.71\",\n  \"product-code\":\"0004\",\n  \"product-name\":\"Car loan\",\n  \"currency\":\"RSD\",\n  \"identification-number-kind\":\"personal-id-number\"\n}"
+						},
+						"url": {
+							"raw": "{{env}}/v1/offer/applications",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"v1",
+								"offer",
+								"applications"
+							]
+						},
+						"description": "POST /applications"
+					},
+					"response": []
+				},
+				{
+					"name": "Create new Questionnaire",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "53905491-9a67-43a9-bf59-94dc37c951a8",
+								"type": "text/javascript",
+								"exec": [
+									"var checkCode = eval('(' + environment.checkCode + ')');",
+									"var log = eval('(' + environment.requestResponseLogger + ')');",
+									"var failedTestCount = 0;",
+									"",
+									"checkCode(200);",
+									"",
+									"if (failedTestCount > 0) {",
+									"    log();",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"entries\": {\n\t\t\"neki\": \"paramm\",\n\t\t\"p\": 2,\n\t\t\"d\": 22.35,\n\t\t\"a\": 23\n\t},\n\t\"purpose\": \"purpose\",\n\t\"date\": \"2018-04-20T00:00:00\",\n\t\"questionnaire-name\": \"test_questionnaire\"\n}"
+						},
+						"url": {
+							"raw": "{{env}}/v1/offer/applications/{{application-number}}/questionnaires/testing-id-for-questionnaire",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"v1",
+								"offer",
+								"applications",
+								"{{application-number}}",
+								"questionnaires",
+								"testing-id-for-questionnaire"
+							]
+						},
+						"description": "GET /applications/{application-number}/documents-for-composition"
+					},
+					"response": []
+				},
+				{
+					"name": "Check Questionnaire is in list",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "95166290-4b43-41ed-b039-634619792877",
+								"type": "text/javascript",
+								"exec": [
+									"var checkCode = eval('(' + environment.checkCode + ')');",
+									"var log = eval('(' + environment.requestResponseLogger + ')');",
+									"var bodyHasKey = eval('(' + environment.bodyHasKey + ')');",
+									"var assert = eval('(' + environment.assert + ')');",
+									"var failedTestCount = 0;",
+									"",
+									"if (responseBody) {",
+									"    var json = pm.response.json();",
+									"    bodyHasKey(\"questionnaires\");",
+									"    if (json.questionnaires) {",
+									"        var questionnaires = json.questionnaires;",
+									"        questionnaires.forEach(function(e, i) {",
+									"            bodyHasKey([`entries in questionnaire ${i+1}`, e.entries], [`application number in questionnaire ${i+1}`, e[\"application-number\"]], [`questionnaire id in questionnaire ${i+1}`, e[\"questionnaire-id\"]], [`purpose in questionnaire ${i+1}`, e.purpose], [`date in questionnaire ${i+1}`, e.date], [`questionnaire name in questionnaire ${i+1}`, e[\"questionnaire-name\"]]);",
+									"            if (e[\"questionnaire-name\"] === \"test_questionnaire\") {",
+									"                assert(\"Is questionnaire name correct in questionnaire 1\", e[\"questionnaire-name\"], \"test_questionnaire\");",
+									"                assert(\"Is questionnaire id correct in questionnaire 1\", e[\"questionnaire-id\"], \"testing-id-for-questionnaire\");",
+									"                assert(\"Is application number correct in questionnaire 1\", e[\"application-number\"], environment[\"application-number\"]);",
+									"            }",
+									"        });",
+									"    }",
+									"}",
+									"checkCode(200);",
+									"",
+									"if (failedTestCount > 0) {",
+									"    log();",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"given-name\":\"Aleksandar\",\n  \"surname\":\"Milutinovic\",\n  \"parent-name\":\"Mi\",\n  \"identification-number\":\"0301992780087\",\n  \"mobile-phone\":\"+3816\",\n  \"email-address\":\"aleksandar.milutinovic@asseco-see.rs\",\n  \"receive-marketing-materials\":true,\n  \"agree-terms-and-conditions\":true,\n  \"product\":\"Cash loan in RSD\",\n  \"annuity\":\"33103.30\",\n  \"amount\":800000,\n  \"term\":27,\n  \"interest-rate\":\"9.71\",\n  \"product-code\":\"0002\",\n  \"product-name\":\"Cash loan in RSD\",\n  \"currency\":\"RSD\",\n  \"identification-number-kind\":\"personal-id-number\"\n}"
+						},
+						"url": {
+							"raw": "{{env}}/v1/offer/applications/{{application-number}}/questionnaires",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"v1",
+								"offer",
+								"applications",
+								"{{application-number}}",
+								"questionnaires"
+							]
+						},
+						"description": "GET /applications/{application-number}/documents-for-composition"
+					},
+					"response": []
+				},
+				{
+					"name": "Check Questionnaire is in Get method for one Q.",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ce09debb-c781-4683-b69c-542f2a5573a9",
+								"type": "text/javascript",
+								"exec": [
+									"var checkCode = eval('(' + environment.checkCode + ')');",
+									"var log = eval('(' + environment.requestResponseLogger + ')');",
+									"var bodyHasKey = eval('(' + environment.bodyHasKey + ')');",
+									"var assert = eval('(' + environment.assert + ')');",
+									"var failedTestCount = 0;",
+									"",
+									"if (responseBody) {",
+									"    var e = pm.response.json();",
+									"    bodyHasKey([`entries in questionnaire`, e.entries], [`application number in questionnaires`, e[\"application-number\"]], [`questionnaire id in questionnaire `, e[\"questionnaire-id\"]], [`purpose in questionnaire`, e.purpose], [`date in questionnaire`, e.date], [`questionnaire name in questionnaire`, e[\"questionnaire-name\"]]);",
+									"",
+									"    assert(\"Is questionnaire name correct ${i+1} in questionnaire 1\", e[\"questionnaire-name\"], \"test_questionnaire\");",
+									"    assert(\"Is questionnaire id correct in questionnaire 1\", e[\"questionnaire-id\"], \"testing-id-for-questionnaire\");",
+									"    assert(\"Is application number correct in questionnaire 1\", e[\"application-number\"], environment[\"application-number\"]);",
+									"}",
+									"checkCode(200);",
+									"",
+									"if (failedTestCount > 0) {",
+									"    log();",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"given-name\":\"Aleksandar\",\n  \"surname\":\"Milutinovic\",\n  \"parent-name\":\"Mi\",\n  \"identification-number\":\"0301992780087\",\n  \"mobile-phone\":\"+3816\",\n  \"email-address\":\"aleksandar.milutinovic@asseco-see.rs\",\n  \"receive-marketing-materials\":true,\n  \"agree-terms-and-conditions\":true,\n  \"product\":\"Cash loan in RSD\",\n  \"annuity\":\"33103.30\",\n  \"amount\":800000,\n  \"term\":27,\n  \"interest-rate\":\"9.71\",\n  \"product-code\":\"0002\",\n  \"product-name\":\"Cash loan in RSD\",\n  \"currency\":\"RSD\",\n  \"identification-number-kind\":\"personal-id-number\"\n}"
+						},
+						"url": {
+							"raw": "{{env}}/v1/offer/applications/{{application-number}}/questionnaires/testing-id-for-questionnaire",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"v1",
+								"offer",
+								"applications",
+								"{{application-number}}",
+								"questionnaires",
+								"testing-id-for-questionnaire"
+							]
+						},
+						"description": "GET /applications/{application-number}/documents-for-composition"
+					},
+					"response": []
+				},
+				{
+					"name": "Create seconds Questionnaire",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "13d9b18e-a284-4142-90d2-7b5944a87f67",
+								"type": "text/javascript",
+								"exec": [
+									"var checkCode = eval('(' + environment.checkCode + ')');",
+									"var log = eval('(' + environment.requestResponseLogger + ')');",
+									"var failedTestCount = 0;",
+									"",
+									"checkCode(200);",
+									"",
+									"if (failedTestCount > 0) {",
+									"    log();",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"entries\": {\n\t\t\"neki\": \"paramm\",\n\t\t\"p\": 2,\n\t\t\"d\": 22.35,\n\t\t\"a\": 23\n\t},\n\t\"purpose\": \"purpose2\",\n\t\"date\": \"2018-04-20T00:00:00\",\n\t\"questionnaire-name\": \"test_questionnaire_2\"\n}"
+						},
+						"url": {
+							"raw": "{{env}}/v1/offer/applications/{{application-number}}/questionnaires/testing-id-for-questionnaire-q2",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"v1",
+								"offer",
+								"applications",
+								"{{application-number}}",
+								"questionnaires",
+								"testing-id-for-questionnaire-q2"
+							]
+						},
+						"description": "GET /applications/{application-number}/documents-for-composition"
+					},
+					"response": []
+				},
+				{
+					"name": "Check both Questionnaires are in list",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "1688fa11-95bd-4a53-b461-048fe1817af0",
+								"type": "text/javascript",
+								"exec": [
+									"var checkCode = eval('(' + environment.checkCode + ')');",
+									"var log = eval('(' + environment.requestResponseLogger + ')');",
+									"var bodyHasKey = eval('(' + environment.bodyHasKey + ')');",
+									"var assert = eval('(' + environment.assert + ')');",
+									"var failedTestCount = 0;",
+									"",
+									"if (responseBody) {",
+									"    var json = pm.response.json();",
+									"    bodyHasKey(\"questionnaires\");",
+									"    if (json.questionnaires) {",
+									"        var questionnaires = json.questionnaires;",
+									"        questionnaires.forEach(function(e, i) {",
+									"            bodyHasKey([`entries in questionnaire ${i+1}`, e.entries], [`application number in questionnaire ${i+1}`, e[\"application-number\"]], [`questionnaire id in questionnaire ${i+1}`, e[\"questionnaire-id\"]], [`purpose in questionnaire ${i+1}`, e.purpose], [`date in questionnaire ${i+1}`, e.date], [`questionnaire name in questionnaire ${i+1}`, e[\"questionnaire-name\"]]);",
+									"            if (e[\"questionnaire-name\"] === \"test_questionnaire\") {",
+									"                assert(\"Is questionnaire name correct in questionnaire 1\", e[\"questionnaire-name\"], \"test_questionnaire\");",
+									"                assert(\"Is questionnaire id correct in questionnaire 1\", e[\"questionnaire-id\"], \"testing-id-for-questionnaire\");",
+									"                assert(\"Is application number correct in questionnaire 1\", e[\"application-number\"], environment[\"application-number\"]);",
+									"            }",
+									"            if (e[\"questionnaire-name\"] === \"test_questionnaire_2\") {",
+									"                assert(\"Is questionnaire name correct in questionnaire 2\", e[\"questionnaire-name\"], \"test_questionnaire_2\");",
+									"                assert(\"Is questionnaire id correct in questionnaire 2\", e[\"questionnaire-id\"], \"testing-id-for-questionnaire-q2\");",
+									"                assert(\"Is application number correct in questionnaire 2\", e[\"application-number\"], environment[\"application-number\"]);",
+									"            }",
+									"        });",
+									"    }",
+									"}",
+									"checkCode(200);",
+									"",
+									"if (failedTestCount > 0) {",
+									"    log();",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"given-name\":\"Aleksandar\",\n  \"surname\":\"Milutinovic\",\n  \"parent-name\":\"Mi\",\n  \"identification-number\":\"0301992780087\",\n  \"mobile-phone\":\"+3816\",\n  \"email-address\":\"aleksandar.milutinovic@asseco-see.rs\",\n  \"receive-marketing-materials\":true,\n  \"agree-terms-and-conditions\":true,\n  \"product\":\"Cash loan in RSD\",\n  \"annuity\":\"33103.30\",\n  \"amount\":800000,\n  \"term\":27,\n  \"interest-rate\":\"9.71\",\n  \"product-code\":\"0002\",\n  \"product-name\":\"Cash loan in RSD\",\n  \"currency\":\"RSD\",\n  \"identification-number-kind\":\"personal-id-number\"\n}"
+						},
+						"url": {
+							"raw": "{{env}}/v1/offer/applications/{{application-number}}/questionnaires",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"v1",
+								"offer",
+								"applications",
+								"{{application-number}}",
+								"questionnaires"
+							]
+						},
+						"description": "GET /applications/{application-number}/documents-for-composition"
+					},
+					"response": []
+				},
+				{
+					"name": "Check second Questionnaire is in Get method for one Q. Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "4fde5cf6-f307-472c-8431-8cad020e8acd",
+								"type": "text/javascript",
+								"exec": [
+									"var checkCode = eval('(' + environment.checkCode + ')');",
+									"var log = eval('(' + environment.requestResponseLogger + ')');",
+									"var bodyHasKey = eval('(' + environment.bodyHasKey + ')');",
+									"var assert = eval('(' + environment.assert + ')');",
+									"var failedTestCount = 0;",
+									"",
+									"if (responseBody) {",
+									"    var e = pm.response.json();",
+									"    bodyHasKey([`entries in questionnaire`, e.entries], [`application number in questionnaires`, e[\"application-number\"]], [`questionnaire id in questionnaire `, e[\"questionnaire-id\"]], [`purpose in questionnaire`, e.purpose], [`date in questionnaire`, e.date], [`questionnaire name in questionnaire`, e[\"questionnaire-name\"]]);",
+									"",
+									"    assert(\"Is questionnaire name correct ${i+1} in questionnaire 1\", e[\"questionnaire-name\"], \"test_questionnaire_2\");",
+									"    assert(\"Is questionnaire id correct in questionnaire 1\", e[\"questionnaire-id\"], \"testing-id-for-questionnaire-q2\");",
+									"    assert(\"Is application number correct in questionnaire 1\", e[\"application-number\"], environment[\"application-number\"]);",
+									"}",
+									"checkCode(200);",
+									"",
+									"if (failedTestCount > 0) {",
+									"    log();",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"given-name\":\"Aleksandar\",\n  \"surname\":\"Milutinovic\",\n  \"parent-name\":\"Mi\",\n  \"identification-number\":\"0301992780087\",\n  \"mobile-phone\":\"+3816\",\n  \"email-address\":\"aleksandar.milutinovic@asseco-see.rs\",\n  \"receive-marketing-materials\":true,\n  \"agree-terms-and-conditions\":true,\n  \"product\":\"Cash loan in RSD\",\n  \"annuity\":\"33103.30\",\n  \"amount\":800000,\n  \"term\":27,\n  \"interest-rate\":\"9.71\",\n  \"product-code\":\"0002\",\n  \"product-name\":\"Cash loan in RSD\",\n  \"currency\":\"RSD\",\n  \"identification-number-kind\":\"personal-id-number\"\n}"
+						},
+						"url": {
+							"raw": "{{env}}/v1/offer/applications/{{application-number}}/questionnaires/testing-id-for-questionnaire-q2",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"v1",
+								"offer",
+								"applications",
+								"{{application-number}}",
+								"questionnaires",
+								"testing-id-for-questionnaire-q2"
+							]
+						},
+						"description": "GET /applications/{application-number}/documents-for-composition"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "GDPR Methods - Test With Diferent Statuses",
+			"item": [
+				{
+					"name": "Send Authorization Email",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "f292eb7b-5743-4cc0-8460-a3fa08207de3",
+								"type": "text/javascript",
+								"exec": [
+									"var number = Math.floor((Math.random() * 10000) + 1000);",
+									"postman.setEnvironmentVariable(\"otp-email\", `ase${number}`);",
+									"",
+									"if (postman.getGlobalVariable(\"secret\") === undefined) {",
+									"    postman.setGlobalVariable(\"secret\", \"secret\");",
+									"}"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "27e61def-5344-404d-98db-a62f13c3d101",
+								"type": "text/javascript",
+								"exec": [
+									"var checkCode = eval('(' + environment.checkCode + ')');",
+									"var log = eval('(' + environment.requestResponseLogger + ')');",
+									"var assert = eval('(' + environment.assert + ')');",
+									"var failedTestCount = 0;",
+									"",
+									"checkCode(200);",
+									"",
+									"if(pm.response){",
+									"    var json = pm.response.json();",
+									"    assert(\"Is the status message 'code sent'\", json[\"status\"], \"code sent\");",
+									"} else {",
+									"    tests[\"There is no response body\"] = responseBody;",
+									"    failedTestCount = failedTestCount++;",
+									"}",
+									"",
+									"if (failedTestCount > 0) {",
+									"    log();",
+									"}",
+									"",
+									"setTimeout(function(){}, 2000);"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"{{otp-email}}@jsontoswift.com\"\r\n}\r\n\r\n"
+						},
+						"url": {
+							"raw": "{{env}}/v1/authorization/otp/email/send",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"v1",
+								"authorization",
+								"otp",
+								"email",
+								"send"
+							]
+						},
+						"description": "POST /v1/authorization/otp/email/send"
+					},
+					"response": []
+				},
+				{
+					"name": "Get OTP from Email",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "5014e9f0-f79b-4c87-9332-073b597efce1",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "83b40157-abe0-40a6-af84-6b5870fd4dbf",
+								"type": "text/javascript",
+								"exec": [
+									"var checkCode = eval('(' + environment.checkCode + ')');",
+									"var log = eval('(' + environment.requestResponseLogger + ')');",
+									"var failedTestCount = 0;",
+									"",
+									"checkCode(200);",
+									"",
+									"if(responseBody){",
+									"    var json = pm.response.json();",
+									"    if (json.mails.length === 0){",
+									"        postman.setNextRequest(\"Get OTP from Email\");",
+									"        setTimeout(function(){}, 2000);",
+									"    } else {",
+									"        postman.setEnvironmentVariable(\"otp-code\", json.mails[0].otpCode);",
+									"    }",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"test-mail@jsontoswift.com\"\r\n}\r\n\r\n"
+						},
+						"url": {
+							"raw": "http://40.112.95.52/~domainba/backend.php?username={{otp-email}}",
+							"protocol": "http",
+							"host": [
+								"40",
+								"112",
+								"95",
+								"52"
+							],
+							"path": [
+								"~domainba",
+								"backend.php"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "{{otp-email}}"
+								}
+							]
+						},
+						"description": "GET private/mail/serve"
+					},
+					"response": []
+				},
+				{
+					"name": "Generate token based on new User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "679e312e-4eab-49d0-af86-abf4f4f1e6d2",
+								"type": "text/javascript",
+								"exec": [
+									"var json = pm.response.json();",
+									"",
+									"postman.setEnvironmentVariable(\"token\", json.access_token);"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "26fbdd0e-3372-40b8-a676-b248f5dbe02a",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "grant_type",
+									"value": "passwordless",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "digital-origination-customer",
+									"type": "text"
+								},
+								{
+									"key": "code",
+									"value": "{{otp-code}}",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "{{otp-email}}@jsontoswift.com",
+									"type": "text"
+								},
+								{
+									"key": "scope",
+									"value": "openid profile offer bpm",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{env}}/v1/authentication/connect/token",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"v1",
+								"authentication",
+								"connect",
+								"token"
+							]
+						},
+						"description": "POST /v1/authentication/connect/token"
+					},
+					"response": []
+				},
+				{
+					"name": "Create application for Reject Status",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "55abd5fd-d616-43df-8ac9-c844df299fea",
+								"type": "text/javascript",
+								"exec": [
+									"var checkCode = eval('(' + environment.checkCode + ')');",
+									"var log = eval('(' + environment.requestResponseLogger + ')');",
+									"var bodyHasKey = eval('(' + environment.bodyHasKey + ')');",
+									"var failedTestCount = 0;",
+									"",
+									"if (responseBody) {",
+									"    var json = pm.response.json();",
+									"    bodyHasKey([\"application-number\", json[\"application-number\"]]);",
+									"    if (json[\"application-number\"]) {",
+									"        postman.setEnvironmentVariable(\"application-number-rejected\", json[\"application-number\"]);",
+									"    }",
+									"}",
+									"checkCode(200);",
+									"setTimeout(function(){}, 2000);",
+									"if (failedTestCount > 0) {",
+									"    log();",
+									"}"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "a854e492-a1ab-4400-b6a2-fcc0b581cbfc",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{  \r\n   \"country-code\":\"RS\",\r\n   \"identification-number\":\"0106996710141\",\r\n   \"mobile-phone-prefix\":\"+381\",\r\n   \"given-name\":\"Niko\",\r\n   \"surname\":\"Neko\",\r\n   \"parent-name\":\"Tamo\",\r\n   \"maiden-name\":\"Mikica\",\r\n   \"mobile-phone\":\"+381123123\",\r\n   \"agree-to-privacy-policy\":true,\r\n   \"email-address\":\"{{otp-email}}@jsontoswift.com\",\r\n   \"receive-marketing-materials\":true,\r\n   \"preffered-culture\":\"sr-Latn-RS\",\r\n   \"product-code\":\"0002\",\r\n   \"product-name\":\"Cash loan\",\r\n   \"amount\":800000,\r\n   \"currency\":\"RSD\",\r\n   \"annuity\":31142.10,\r\n   \"term\":30,\r\n   \"identification-number-kind\":\"personal-id-number\",\r\n   \"residential-status\": \"something\",\r\n   \"country-of-residence\": \"biasr\"\r\n}"
+						},
+						"url": {
+							"raw": "{{env}}/v1/offer/applications",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"v1",
+								"offer",
+								"applications"
+							]
+						},
+						"description": "POST /applications"
+					},
+					"response": []
+				},
+				{
+					"name": "Update application status to Rejected",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "40a69295-4080-4050-af60-6f648e135be4",
+								"type": "text/javascript",
+								"exec": [
+									"var checkCode = eval('(' + environment.checkCode + ')');",
+									"var log = eval('(' + environment.requestResponseLogger + ')');",
+									"var bodyHasKey = eval('(' + environment.bodyHasKey + ')');",
+									"var failedTestCount = 0;",
+									"",
+									"checkCode(200);",
+									"setTimeout(function(){}, 2000);",
+									"if (failedTestCount > 0) {",
+									"    log();",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"application-status\": \"rejected\"\n}"
+						},
+						"url": {
+							"raw": "{{env}}/v1/offer/applications/{{application-number-rejected}}/status",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"v1",
+								"offer",
+								"applications",
+								"{{application-number-rejected}}",
+								"status"
+							]
+						},
+						"description": "POST /{repo}/folders"
+					},
+					"response": []
+				},
+				{
+					"name": "Check that status is Rejected for application",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "05bea9dc-ca8a-44da-a17c-337f86290b9a",
+								"type": "text/javascript",
+								"exec": [
+									"var checkCode = eval('(' + environment.checkCode + ')');",
+									"var log = eval('(' + environment.requestResponseLogger + ')');",
+									"var assert = eval('(' + environment.assert + ')');",
+									"var failedTestCount = 0;",
+									"",
+									"var regexStar = function(testString){",
+									"    return /^[*\\ ]+$/.test(testString);",
+									"};",
+									"",
+									"if (responseBody) {",
+									"    var json = pm.response.json();",
+									"    if(json[\"status\"] === \"draft\"){",
+									"        postman.setNextRequest(\"Check that status is Rejected for application\");",
+									"        setTimeout(function(){}, 2000);",
+									"        console.log(json[\"status\"]);",
+									"    }",
+									"} else {",
+									"    test[\"Is response there\"] = responseBody;",
+									"}",
+									"checkCode(200);",
+									"",
+									"if (failedTestCount > 0) {",
+									"    log();",
+									"}"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "e43f34a7-1624-4460-b6ba-cda3dc0813ec",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{env}}/v1/offer/applications/{{application-number-rejected}}?include=documents,involved-parties",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"v1",
+								"offer",
+								"applications",
+								"{{application-number-rejected}}"
+							],
+							"query": [
+								{
+									"key": "include",
+									"value": "documents,involved-parties"
+								}
+							]
+						},
+						"description": "Generate Token"
+					},
+					"response": []
+				},
+				{
+					"name": "Create application for Accept status",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d30aef62-78df-4b85-9db0-d2217f4784bf",
+								"type": "text/javascript",
+								"exec": [
+									"var checkCode = eval('(' + environment.checkCode + ')');",
+									"var log = eval('(' + environment.requestResponseLogger + ')');",
+									"var bodyHasKey = eval('(' + environment.bodyHasKey + ')');",
+									"var failedTestCount = 0;",
+									"",
+									"if (responseBody) {",
+									"    var json = pm.response.json();",
+									"    bodyHasKey([\"application-number\", json[\"application-number\"]]);",
+									"    if (json[\"application-number\"]) {",
+									"        postman.setEnvironmentVariable(\"application-number-accepted\", json[\"application-number\"]);",
+									"    }",
+									"}",
+									"checkCode(200);",
+									"setTimeout(function(){}, 2000);",
+									"if (failedTestCount > 0) {",
+									"    log();",
+									"}"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "a30f2a04-86d0-4eab-926f-8bb7ef939987",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{  \r\n   \"country-code\":\"RS\",\r\n   \"identification-number\":\"0106996710141\",\r\n   \"mobile-phone-prefix\":\"+381\",\r\n   \"given-name\":\"Niko\",\r\n   \"surname\":\"Neko\",\r\n   \"parent-name\":\"Tamo\",\r\n   \"maiden-name\":\"Mikica\",\r\n   \"mobile-phone\":\"+381123123\",\r\n   \"agree-to-privacy-policy\":true,\r\n   \"email-address\":\"{{otp-email}}@jsontoswift.com\",\r\n   \"receive-marketing-materials\":true,\r\n   \"preffered-culture\":\"sr-Latn-RS\",\r\n   \"product-code\":\"0002\",\r\n   \"product-name\":\"Cash loan\",\r\n   \"amount\":800000,\r\n   \"currency\":\"RSD\",\r\n   \"annuity\":31142.10,\r\n   \"term\":30,\r\n   \"identification-number-kind\":\"personal-id-number\",\r\n   \"residential-status\": \"something\",\r\n   \"country-of-residence\": \"biasr\"\r\n}"
+						},
+						"url": {
+							"raw": "{{env}}/v1/offer/applications",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"v1",
+								"offer",
+								"applications"
+							]
+						},
+						"description": "POST /applications"
+					},
+					"response": []
+				},
+				{
+					"name": "Update application status to Accepted",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "40a69295-4080-4050-af60-6f648e135be4",
+								"type": "text/javascript",
+								"exec": [
+									"var checkCode = eval('(' + environment.checkCode + ')');",
+									"var log = eval('(' + environment.requestResponseLogger + ')');",
+									"var bodyHasKey = eval('(' + environment.bodyHasKey + ')');",
+									"var failedTestCount = 0;",
+									"",
+									"checkCode(200);",
+									"setTimeout(function(){}, 2000);",
+									"if (failedTestCount > 0) {",
+									"    log();",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"application-status\": \"accepted\"\n}"
+						},
+						"url": {
+							"raw": "{{env}}/v1/offer/applications/{{application-number-accepted}}/status",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"v1",
+								"offer",
+								"applications",
+								"{{application-number-accepted}}",
+								"status"
+							]
+						},
+						"description": "POST /{repo}/folders"
+					},
+					"response": []
+				},
+				{
+					"name": "Check that status is Accepted for application",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "c3d8ce4d-5bd1-412c-8528-4ca84489c55d",
+								"type": "text/javascript",
+								"exec": [
+									"var checkCode = eval('(' + environment.checkCode + ')');",
+									"var log = eval('(' + environment.requestResponseLogger + ')');",
+									"var assert = eval('(' + environment.assert + ')');",
+									"var failedTestCount = 0;",
+									"",
+									"var regexStar = function(testString){",
+									"    return /^[*\\ ]+$/.test(testString);",
+									"};",
+									"",
+									"if (responseBody) {",
+									"    var json = pm.response.json();",
+									"    if(json[\"status\"] === \"draft\"){",
+									"        postman.setNextRequest(\"Check that status is Accepted for application\");",
+									"        setTimeout(function(){}, 2000);",
+									"        console.log(json[\"status\"]);",
+									"    }",
+									"    ",
+									"} else {",
+									"    test[\"Is response there\"] = responseBody;",
+									"}",
+									"checkCode(200);",
+									"",
+									"if (failedTestCount > 0) {",
+									"    log();",
+									"}"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "e43f34a7-1624-4460-b6ba-cda3dc0813ec",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{env}}/v1/offer/applications/{{application-number-accepted}}?include=documents,involved-parties",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"v1",
+								"offer",
+								"applications",
+								"{{application-number-accepted}}"
+							],
+							"query": [
+								{
+									"key": "include",
+									"value": "documents,involved-parties"
+								}
+							]
+						},
+						"description": "Generate Token"
+					},
+					"response": []
+				},
+				{
+					"name": "Create application for draft",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "370e3346-3380-4b9e-a1b3-a972b39d97e3",
+								"type": "text/javascript",
+								"exec": [
+									"var checkCode = eval('(' + environment.checkCode + ')');",
+									"var log = eval('(' + environment.requestResponseLogger + ')');",
+									"var bodyHasKey = eval('(' + environment.bodyHasKey + ')');",
+									"var failedTestCount = 0;",
+									"",
+									"if (responseBody) {",
+									"    var json = pm.response.json();",
+									"    bodyHasKey([\"application-number\", json[\"application-number\"]]);",
+									"    if (json[\"application-number\"]) {",
+									"        postman.setEnvironmentVariable(\"application-number-draft\", json[\"application-number\"]);",
+									"    }",
+									"}",
+									"checkCode(200);",
+									"",
+									"if (failedTestCount > 0) {",
+									"    log();",
+									"}"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "a30f2a04-86d0-4eab-926f-8bb7ef939987",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{  \r\n   \"country-code\":\"RS\",\r\n   \"identification-number\":\"0106996710141\",\r\n   \"mobile-phone-prefix\":\"+381\",\r\n   \"given-name\":\"Niko\",\r\n   \"surname\":\"Neko\",\r\n   \"parent-name\":\"Tamo\",\r\n   \"maiden-name\":\"Mikica\",\r\n   \"mobile-phone\":\"+381123123\",\r\n   \"agree-to-privacy-policy\":true,\r\n   \"email-address\":\"{{otp-email}}@jsontoswift.com\",\r\n   \"receive-marketing-materials\":true,\r\n   \"preffered-culture\":\"sr-Latn-RS\",\r\n   \"product-code\":\"0002\",\r\n   \"product-name\":\"Cash loan\",\r\n   \"amount\":800000,\r\n   \"currency\":\"RSD\",\r\n   \"annuity\":31142.10,\r\n   \"term\":30,\r\n   \"identification-number-kind\":\"personal-id-number\",\r\n   \"residential-status\": \"something\",\r\n   \"country-of-residence\": \"biasr\"\r\n}"
+						},
+						"url": {
+							"raw": "{{env}}/v1/offer/applications",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"v1",
+								"offer",
+								"applications"
+							]
+						},
+						"description": "POST /applications"
+					},
+					"response": []
+				},
+				{
+					"name": "GDPR Export",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "9716bbc2-9d89-4d1b-8285-813b9f25cee5",
+								"type": "text/javascript",
+								"exec": [
+									"var checkCode = eval('(' + environment.checkCode + ')');",
+									"var log = eval('(' + environment.requestResponseLogger + ')');",
+									"var bodyHasKey = eval('(' + environment.bodyHasKey + ')');",
+									"var assert = eval('(' + environment.assert + ')');",
+									"var failedTestCount = 0;",
+									"",
+									"checkCode(200);",
+									"",
+									"var mail = `pwdless.${environment[\"otp-email\"]}.jsontoswift.com`;",
+									"if (responseBody) {",
+									"    var json = pm.response.json();",
+									"    var erasable = json[\"erasable-data-full-match\"];",
+									"    bodyHasKey([\"erasable-data-full-match\", erasable]);",
+									"    if (erasable) {",
+									"        erasable.forEach(function(element) {",
+									"            assert(`Is correct REJECTED application present in erasable-data-full-match`, element[\"application-number\"], environment[\"application-number-rejected\"]);",
+									"            assert(`Is username ${mail} for rejected application`, element.username, mail);",
+									"            console.log(mail);",
+									"            console.log(element.username);",
+									"            assert('Is only the application with status REJECTED present in erasable-data-full-match', element[\"application-status\"], \"rejected\");",
+									"        });",
+									"    }",
+									"",
+									"    var nonErasable = json[\"non-erasable-data-full-match\"];",
+									"    bodyHasKey([\"erasable-data-full-match\", nonErasable]);",
+									"    if (nonErasable) {",
+									"        nonErasable.forEach(function(element, counter) {",
+									"            console.log('broj ' + element['application-number']);",
+									"            console.log('broj env ' + environment[\"application-number-draft\"]);",
+									"            if (element['application-number'] === environment[\"application-number-draft\"]) {",
+									"                assert(`Is correct DRAFT application present in non-erasable-data-full-match for data ${counter}`, element[\"application-number\"], environment[\"application-number-draft\"]);",
+									"                assert(`Is username correct for DRAFT in non-erasable data ${counter}`, element.username, mail);",
+									"                assert('Is the application with status REJECTED present in erasable-data-full-match for data ${counter}', element[\"application-status\"], \"draft\");",
+									"            }",
+									"            if (element['application-number'] === environment[\"application-number-accepted\"]) {",
+									"                assert(`Is correct ACCEPTED application present in non-erasable-data-full-match for data ${counter}`, element[\"application-number\"], environment[\"application-number-accepted\"]);",
+									"                assert(`Is username correct for ACCEPTED in non-erasable data ${counter}`, element.username, mail);",
+									"                assert('Is the application with status ACCEPTED present in erasable-data-full-match for data ${counter}', element[\"application-status\"], \"accepted\");",
+									"            }",
+									"        });",
+									"",
+									"    }",
+									"",
+									"}",
+									"",
+									"if (failedTestCount > 0) {",
+									"    log();",
+									"}"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "e43f34a7-1624-4460-b6ba-cda3dc0813ec",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{env}}/v1/offer/gdpr/export?username=pwdless.{{otp-email}}.jsontoswift.com",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"v1",
+								"offer",
+								"gdpr",
+								"export"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "pwdless.{{otp-email}}.jsontoswift.com"
+								}
+							]
+						},
+						"description": "Generate Token"
+					},
+					"response": []
+				},
+				{
+					"name": "GDPR Anonymize",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ef09cf39-c3f3-475b-89fd-dcb8a5078b0f",
+								"type": "text/javascript",
+								"exec": [
+									"var checkCode = eval('(' + environment.checkCode + ')');",
+									"var log = eval('(' + environment.requestResponseLogger + ')');",
+									"var assert = eval('(' + environment.assert + ')');",
+									"var bodyHasKey = eval('(' + environment.bodyHasKey + ')');",
+									"var failedTestCount = 0;",
+									"",
+									"var regexStar = function(testString){",
+									"    return /^[*\\ ]+$/.test(testString);",
+									"};",
+									"var mail = `pwdless.${environment[\"otp-email\"]}.jsontoswift.com`;",
+									"if (responseBody) {",
+									"    var json = pm.response.json();",
+									"    var erasable = json[\"erasable-data-full-match\"];",
+									"    bodyHasKey([\"erasable-data-full-match\", erasable]);",
+									"    if (erasable) {",
+									"        erasable.forEach(function(element) {",
+									"            assert(`Is correct REJECTED application present in erasable-data-full-match`, element[\"application-number\"], environment[\"application-number-rejected\"]);",
+									"            assert(`Is username ${mail} for rejected application`, element.username, mail);",
+									"            console.log(mail);",
+									"            console.log(element.username);",
+									"            assert('Is only the application with status REJECTED present in erasable-data-full-match', element[\"application-status\"], \"rejected\");",
+									"        });",
+									"    }",
+									"",
+									"    var nonErasable = json[\"non-erasable-data-full-match\"];",
+									"    bodyHasKey([\"erasable-data-full-match\", nonErasable]);",
+									"    if (nonErasable) {",
+									"        nonErasable.forEach(function(element, counter) {",
+									"            console.log('broj ' + element['application-number']);",
+									"            console.log('broj env ' + environment[\"application-number-draft\"]);",
+									"            if (element['application-number'] === environment[\"application-number-draft\"]) {",
+									"                assert(`Is correct DRAFT application present in non-erasable-data-full-match for data ${counter}`, element[\"application-number\"], environment[\"application-number-draft\"]);",
+									"                assert(`Is username correct for DRAFT in non-erasable data ${counter}`, element.username, mail);",
+									"                assert('Is the application with status REJECTED present in erasable-data-full-match for data ${counter}', element[\"application-status\"], \"draft\");",
+									"            }",
+									"            if (element['application-number'] === environment[\"application-number-accepted\"]) {",
+									"                assert(`Is correct ACCEPTED application present in non-erasable-data-full-match for data ${counter}`, element[\"application-number\"], environment[\"application-number-accepted\"]);",
+									"                assert(`Is username correct for ACCEPTED in non-erasable data ${counter}`, element.username, mail);",
+									"                assert('Is the application with status ACCEPTED present in erasable-data-full-match for data ${counter}', element[\"application-status\"], \"accepted\");",
+									"            }",
+									"        });",
+									"",
+									"    }",
+									"    ",
+									"    if(json[\"data-after-anonymization\"]){",
+									"        var parties = json[\"data-after-anonymization\"];",
+									"        parties.forEach(function(gdprParty, n){",
+									"            nameAnon = true",
+									"            assert(`Is gdprParty ${n} customer-name anonimized`, regexStar(gdprParty[\"customer-name\"]), true);",
+									"            assert(`Is gdprParty ${n} identification-number anonimized`, regexStar(gdprParty[\"identification-number\"]), true);",
+									"            assert(`Is gdprParty ${n} given-name anonimized`, regexStar(gdprParty[\"given-name\"]), true);",
+									"            assert(`Is gdprParty ${n} parent-name anonimized`, regexStar(gdprParty[\"parent-name\"]), true);",
+									"            assert(`Is gdprParty ${n} surname anonimized`, regexStar(gdprParty.surname), true);",
+									"            assert(`Is gdprParty ${n} email-address anonimized`, regexStar(gdprParty[\"email-address\"]), true);",
+									"            assert(`Is gdprParty ${n} mobile-phone anonimized`, regexStar(gdprParty[\"mobile-phone\"]), true);",
+									"            if(gdprParty.username === `pwdless.${environment[\"otp-email\"]}.jsontoswift.com`){",
+									"                console.log(\"jke\");",
+									"                nameAnon = false;",
+									"            }",
+									"            assert(`Is gdprParty ${n} username anonimized`, nameAnon, true);",
+									"        });",
+									"    }",
+									"} else {",
+									"    test[\"Is response there\"] = responseBody;",
+									"}",
+									"checkCode(200);",
+									"",
+									"if (failedTestCount > 0) {",
+									"    log();",
+									"}",
+									"",
+									"setTimeout(function(){}, 2000);"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "c7f5250d-f745-4c8c-b5ad-8a06c86cee36",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\":\"pwdless.{{otp-email}}.jsontoswift.com\"\n}"
+						},
+						"url": {
+							"raw": "{{env}}/v1/offer/gdpr/anonymize",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"v1",
+								"offer",
+								"gdpr",
+								"anonymize"
+							]
+						},
+						"description": "Generate Token"
+					},
+					"response": []
+				},
+				{
+					"name": "GDPR Export - Test user is anonymized",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "7ac86ddc-4608-4ec3-ad19-db94b1074d02",
+								"type": "text/javascript",
+								"exec": [
+									"var checkCode = eval('(' + environment.checkCode + ')');",
+									"var log = eval('(' + environment.requestResponseLogger + ')');",
+									"var assert = eval('(' + environment.assert + ')');",
+									"var bodyHasKey = eval('(' + environment.bodyHasKey+ ')');",
+									"var failedTestCount = 0;",
+									"",
+									"var mail = `pwdless.${environment[\"otp-email\"]}.jsontoswift.com`;",
+									"if (responseBody) {",
+									"    var json = pm.response.json();",
+									"    if(json[\"erasable-data-full-match\"]){",
+									"        assert(\"Is erasable data empty\", json[\"erasable-data-full-match\"].length, 0);",
+									"    } else {",
+									"        failedTestCount = failedTestCount + 1;",
+									"    }",
+									"    var nonErasable = json[\"non-erasable-data-full-match\"];",
+									"    bodyHasKey([\"erasable-data-full-match\", nonErasable]);",
+									"    if (nonErasable) {",
+									"        nonErasable.forEach(function(element, counter) {",
+									"            console.log('broj ' + element['application-number']);",
+									"            console.log('broj env ' + environment[\"application-number-draft\"]);",
+									"            if (element['application-number'] === environment[\"application-number-draft\"]) {",
+									"                assert(`Is correct DRAFT application present in non-erasable-data-full-match for data ${counter}`, element[\"application-number\"], environment[\"application-number-draft\"]);",
+									"                assert(`Is username correct for DRAFT in non-erasable data ${counter}`, element.username, mail);",
+									"                assert('Is the application with status REJECTED present in erasable-data-full-match for data ${counter}', element[\"application-status\"], \"draft\");",
+									"            }",
+									"            if (element['application-number'] === environment[\"application-number-accepted\"]) {",
+									"                assert(`Is correct ACCEPTED application present in non-erasable-data-full-match for data ${counter}`, element[\"application-number\"], environment[\"application-number-accepted\"]);",
+									"                assert(`Is username correct for ACCEPTED in non-erasable data ${counter}`, element.username, mail);",
+									"                assert('Is the application with status ACCEPTED present in erasable-data-full-match for data ${counter}', element[\"application-status\"], \"accepted\");",
+									"            }",
+									"        });",
+									"",
+									"    }",
+									"} else {",
+									"    test[\"Is response there\"] = responseBody;",
+									"}",
+									"checkCode(200);",
+									"",
+									"if (failedTestCount > 0) {",
+									"    log();",
+									"}"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "e43f34a7-1624-4460-b6ba-cda3dc0813ec",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{env}}/v1/offer/gdpr/export?username=pwdless.{{otp-email}}.jsontoswift.com",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"v1",
+								"offer",
+								"gdpr",
+								"export"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "pwdless.{{otp-email}}.jsontoswift.com"
+								}
+							]
+						},
+						"description": "Generate Token"
+					},
+					"response": []
+				},
+				{
+					"name": "Check that Anonymize worked on application",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0be0612b-1ff6-49d1-86d7-1b13fd85f06f",
+								"type": "text/javascript",
+								"exec": [
+									"var checkCode = eval('(' + environment.checkCode + ')');",
+									"var log = eval('(' + environment.requestResponseLogger + ')');",
+									"var assert = eval('(' + environment.assert + ')');",
+									"var failedTestCount = 0;",
+									"",
+									"var regexStar = function(testString){",
+									"    return /^[*\\ ]+$/.test(testString);",
+									"};",
+									"",
+									"if (responseBody) {",
+									"    var json = pm.response.json();",
+									"    nameAnon = true;",
+									"    ",
+									"    assert(`Is customer-name anonimized`, regexStar(json[\"customer-name\"]), true);",
+									"    ",
+									"    if(json.initiator === `pwdless.${environment[\"otp-email\"]}.jsontoswift.com`){",
+									"        nameAnon = false;",
+									"    }",
+									"    assert(`Is initiator anonimized`, nameAnon, true);",
+									"    nameAnon = true;",
+									"    var involvedParties = json[\"involved-parties\"][0];",
+									"    ",
+									"    assert(`Is customer-name anonimized in involved parties`, regexStar(involvedParties[\"customer-name\"]), true);",
+									"    assert(`Is identification-number anonimized in involved parties`, regexStar(involvedParties[\"identification-number\"]), true);",
+									"    assert(`Is given-name anonimized in involved parties`, regexStar(involvedParties[\"given-name\"]), true);",
+									"    assert(`Is parent-name anonimized in involved parties`, regexStar(involvedParties[\"parent-name\"]), true);",
+									"    assert(`Is surname anonimized in involved parties`, regexStar(involvedParties.surname), true);",
+									"    assert(`Is email-address anonimized in involved parties`, regexStar(involvedParties[\"email-address\"]), true);",
+									"    assert(`Is mobile-phone anonimized in involved parties`, regexStar(involvedParties[\"mobile-phone\"]), true);",
+									"    assert(`Is identification number anonimized in involved parties`, regexStar(involvedParties[\"identification-number\"]), true);",
+									"    if(involvedParties.username === `pwdless.${environment[\"otp-email\"]}.jsontoswift.com`){",
+									"        nameAnon = false;",
+									"    }",
+									"    assert(`Is username anonimized in involved parties`, nameAnon, true);",
+									"    ",
+									"} else {",
+									"    test[\"Is response there\"] = responseBody;",
+									"}",
+									"checkCode(200);",
+									"",
+									"if (failedTestCount > 0) {",
+									"    log();",
+									"}"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "e43f34a7-1624-4460-b6ba-cda3dc0813ec",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{env}}/v1/offer/applications/{{application-number-rejected}}?include=documents,involved-parties",
+							"host": [
+								"{{env}}"
+							],
+							"path": [
+								"v1",
+								"offer",
+								"applications",
+								"{{application-number-rejected}}"
+							],
+							"query": [
+								{
+									"key": "include",
+									"value": "documents,involved-parties"
+								}
+							]
+						},
+						"description": "Generate Token"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
